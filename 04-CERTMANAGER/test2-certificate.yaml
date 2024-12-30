@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cluster-cert
+  namespace: test-web
+spec:
+  dnsNames:
+  - testing-cert.com
+  secretName: letsencrypt-test
+  issuerRef:
+    name: letsencrypt-staging
