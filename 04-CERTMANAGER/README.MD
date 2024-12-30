@@ -77,12 +77,6 @@ Port	        | Protocol	| Component                 |Purpose
 
     ![alt text](images/image-05.png)
 
-- Set the current Kubernetes context to use the metallb-system namespace by default. So, it doesn't need to be included everytime we run a command.
-
-    ```sh
-    kubectl config set-context --current --namespace=cert-manager
-    ```
-
 - Deploy the certificate Manager helm chart, using this file [01-cert-manager-values.yaml](01-cert-manager-values.yaml)
 
     ```sh

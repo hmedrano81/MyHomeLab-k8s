@@ -124,7 +124,6 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
     helm repo add nfs-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
     helm repo update
     ```
-
     ![alt text](images/image-08.png)
 
 - Search for all the charts in this repository installed, which in this case there is only one called *nfs-subdir-external-provisioner*.
@@ -132,7 +131,6 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
     ```sh
     helm search repo nfs-provisioner
     ```
-
     ![alt text](images/image-09.png)
 
 - Download the values file to configure the helm chart.
@@ -142,7 +140,9 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
     helm show values nfs-provisioner/nfs-subdir-external-provisioner > 01-nfs-prov-values.yaml
     ```
 
-- Then open this file in a editor, such as vim or Visual Studio code, and modify the **nfs** configuration.
+- Then open this file in a editor, such as vim or Visual Studio code.
+
+- Modify the **nfs** configuration.
 
     - server: (IP address of the NFS Server)
 

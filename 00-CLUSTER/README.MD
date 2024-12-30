@@ -3,6 +3,9 @@
 ## Overview
 This document provides an overview of the Kubernetes cluster setup for my homelab environment.
 
+## Prerequisites
+- `kubectl` and `helm` command-line tool configured to communicate with your cluster
+
 ## Design
 
 Host Name                   | IP Address        | Network Mask      | Default Gateway   | DNS       |

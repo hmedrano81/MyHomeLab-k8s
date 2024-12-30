@@ -22,12 +22,9 @@ MetalLB provides a network load-balancer implementation for a bare-metal deploym
 
   - BGP: All machines in the cluster establish BGP peering sessions with nearby routers that you control, and tell those routers how to forward traffic to the service IPs. [MEtalLB in BGP mode](https://metallb.universe.tf/concepts/bgp/).
 
-
 ## Prerequisites
-
-- A Kubernetes cluster
-- `kubectl` command-line tool configured to communicate with your cluster
-- Helm installed on your local machine
+- A running Kubernetes cluster
+- `kubectl` and `helm` command-line tool configured to communicate with your cluster
 
 ## Conectivity Master and Worker Nodes
 
@@ -70,12 +67,6 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
 
   ![alt text](images/image-08.png)
 
-- Set the current Kubernetes context to use the metallb-system namespace by default. So, it doesn't need to be included everytime we run a command.
-
-  ```sh
-  kubectl config set-context --current --namespace=metallb-system
-  ```
-
 ## Download and modify the MetalLB Helm repository
 
 - From your laptop with access the the Kubernetes Cluster, add the MetalLB repository and update it.
@@ -95,12 +86,14 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
   ![alt text](images/image-04.png)
 
 - Download the values file to configure the helm chart.
-
     ```sh
     cd ~/Documents/MyHomelab-k8s/02-METALLB/
     helm show values metallb/metallb > 02-metallb-values.yaml
     ```
+
 - Then open this file in a editor, such as vim or Visual Studio code, and modify the configuration.
+
+- Modify **loadBalancerClass**
 
   - loadBalancerClass: (A name for your class, such as metallb)
 
@@ -112,13 +105,13 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
   
   ![alt text](images/image-16.png)
 
-  - serviceAccount -> name: (A name for your controller's service account, such as metallb-controller-manager)
+  - serviceAccount > name: (A name for your controller's service account, such as metallb-controller-manager)
 
   ![alt text](images/image-06.png)
 
 - Modify the **speaker** configuration.
 
-  - serviceAccount -> name: (A name for your speaker's service account, such as metallb-speaker-manager)
+  - serviceAccount > name: (A name for your speaker's service account, such as metallb-speaker-manager)
 
   ![alt text](images/image-07.png)
 
