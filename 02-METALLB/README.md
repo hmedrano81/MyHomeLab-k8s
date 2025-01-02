@@ -24,7 +24,8 @@ MetalLB provides a network load-balancer implementation for a bare-metal deploym
 
 ## Prerequisites
 - A running Kubernetes cluster
-- `kubectl` and `helm` command-line tool configured to communicate with your cluster
+- `kubectl` command-line tool configured to communicate with your cluster
+- `helm` command-line tool installed on your local machine
 
 ## Conectivity Master and Worker Nodes
 
@@ -67,7 +68,7 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
 
   ![alt text](images/image-08.png)
 
-## Download and modify the MetalLB Helm repository
+## Download the metallb/metallb Helm repository and modify the configuration
 
 - From your laptop with access the the Kubernetes Cluster, add the MetalLB repository and update it.
 
@@ -77,7 +78,7 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
   ```
   ![alt text](images/image-03.png)
 
-- Search for all the charts in this repository installed. You should fine one called **metallb/metallb**
+- Search for all the charts for the installed repository. You should find one called **metallb/metallb**
 
   ```sh
   helm search repo metallb

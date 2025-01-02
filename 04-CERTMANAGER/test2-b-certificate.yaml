@@ -6,6 +6,6 @@ metadata:
 spec:
   dnsNames:
   - testing-cert.com
-  secretName: letsencrypt-test
+  secretName: lets-encrypt-test
   issuerRef:
     name: letsencrypt-staging

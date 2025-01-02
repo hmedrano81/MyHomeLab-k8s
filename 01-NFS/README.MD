@@ -116,7 +116,7 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
     sudo umount /mnt/testmount
     ```
 
-## Download and configure the NFS provisioner Helm chart
+## Download the nfs-provisioner/nfs-subdir-external-provisioner Helm repository and modify the configuration
 
 - From your laptop with access the the Kubernetes Cluster, add the NFS repository and update it.
 
@@ -126,7 +126,7 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
     ```
     ![alt text](images/image-08.png)
 
-- Search for all the charts in this repository installed, which in this case there is only one called *nfs-subdir-external-provisioner*.
+- Search for all the charts for the installed repository. You should find one called *nfs-subdir-external-provisioner*.
 
     ```sh
     helm search repo nfs-provisioner

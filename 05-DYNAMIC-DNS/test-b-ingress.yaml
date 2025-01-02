@@ -4,16 +4,11 @@ metadata:
   name: ingress-resource
   namespace: test-web
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
-    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    #acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
-  tls:
-  - hosts:
-    - testing-cert.com
-    secretName: letsencrypt-test
-  ingressClassName: nginx
   rules:
-  - host: testing-cert.com
+  - host: api.nolifelover.example
     http:
       paths:
       - path: /
@@ -23,3 +18,8 @@ spec:
             name: nginx-deploy-main
             port:
               number: 80
+  tls:
+  - hosts:
+    - api.nolifelover.example
+    secretName: ingress-resource-http-tls
+  ingressClassName: nginx

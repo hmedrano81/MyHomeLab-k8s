@@ -12,9 +12,9 @@ There are several Ingress Controllers available. In this tutorial, we will use N
 ## Prerequisites
 - A running Kubernetes cluster
 - `kubectl` and `helm` command-line tool configured to communicate with your cluster
+- `helm` command-line tool installed on your local machine
 
-
-## Download and modify the NGINX Helm repository
+## Download the nginx/ingress-nginx Helm repository and modify the configuration
 
 - From your laptop with access the the Kubernetes Cluster, add the nginx repository and update it.
 
@@ -24,7 +24,7 @@ There are several Ingress Controllers available. In this tutorial, we will use N
     ```
     <img src="images/image-01.png" alt="drawing" width="700"/>
 
-- Search for all the charts in this repository installed. You should fine one called **nginx/ingress-nginx**
+- Search for all the charts for the installed repository. You should find one called **nginx/ingress-nginx**
 
     ```sh
     helm search repo nginx
@@ -37,25 +37,21 @@ There are several Ingress Controllers available. In this tutorial, we will use N
     helm show values nginx/ingress-nginx > 02-nginx-values.yaml
     ```
 
-- Then open this file in a editor, such as vim or Visual Studio code, and modify the configuration.
+- Then open this file in a editor, such as vim or Visual Studio code, and modify the following entries in the configuration.
 
-- Modify the **controller**
-
-    - ingressClassResource > default: true
+    - `controller > ingressClassResource > default:` true
 
         <img src="images/image-03.png" alt="drawing" width="800"/>
                             
-    - kind: DaemonSet
+    - `controller > kind:` DaemonSet
 
         <img src="images/image-04.png" alt="drawing" width="800"/>
 
-    - service > loadBalancerClass: "metallb"
+    - `controller > service > loadBalancerClass:` "metallb"
 
         <img src="images/image-05.png" alt="drawing" width="800"/>
 
-- Modify the **serviceAccount** 
-
-    - name: "nginx-ingress-manager" 
+    - `serviceAccount > name:` "nginx-ingress-manager"
 
         <img src="images/image-06.png" alt="drawing" width="800"/>
 
@@ -148,7 +144,7 @@ Repository: [justmeandopensource by Venkat Nagappan](https://github.com/justmean
     <img src="images/image-13.png" alt="drawing" width="800"/>
 
 
-- Confirm the nginx server can be reached inside your network. Using the external IP address assigned, open a the URL from your browser. [https://http://nginx.example.com/](https://http://nginx.example.com/)
+- Confirm the nginx server can be reached inside your network. Using the external IP address assigned, open a the URL from your browser. [https://nginx.example.com/](https://nginx.example.com/)
 
     <img src="images/image-14.png" alt="drawing" width="800"/>
 
