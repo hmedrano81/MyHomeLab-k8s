@@ -9,7 +9,7 @@ spec:
         # Let's Encrypt will use this to contact you about expiring certificates,
         # and issues related to your account
         server: https://acme-staging-v02.api.letsencrypt.org/directory
-        email: <Your Email>
+        email: <your_email>
         privateKeySecretRef:
             # Secret resource that will be used to store the account's private key/
             # name: example-issuer-account-key

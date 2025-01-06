@@ -26,7 +26,6 @@ Port	        | Protocol	| Component                 |Purpose
     ![alt text](images/image-01.png)
 
 - Search for all the charts for the installed repository. You should find one called **jetstack/cert-manager**
-
     ```sh
     helm search repo jetstack
     ```
@@ -34,10 +33,9 @@ Port	        | Protocol	| Component                 |Purpose
     ![alt text](images/image-02.png)
 
 - Download the values file to configure the helm chart.
-
     ```sh
     cd ~/Documents/MyHomelab-k8s/04-CERTMANAGER/
-    helm show values jetstack/cert-manager > 01-cert-manager.yaml
+    helm show values jetstack/cert-manager > 01-cert-manager-values.yaml
     ``` 
 
 - Then open this file in a editor, such as vim or Visual Studio code, and modify the following entries in the configuration.
@@ -66,7 +64,7 @@ Port	        | Protocol	| Component                 |Purpose
 
 ## Install the Certificate Manager Helm chart
 
-- Create a new namespace called cert-manager, suing this file [00-cert-manager-namespace.yaml](00-cert-manager-namespace.yaml).
+- Create a new namespace called cert-manager, using this file [00-cert-manager-namespace.yaml](00-cert-manager-namespace.yaml).
 
     ```sh
     kubectl apply -f 00-cert-manager-namespace.yaml
@@ -90,27 +88,31 @@ Port	        | Protocol	| Component                 |Purpose
     watch kubectl get all -n cert-manager
     ```
 
-## Deploy a Cluster Issuer
+## 1. Testing a deployment of a Cluster Issuer
 
 An Issuer is a namespaced resource, and it is not possible to issue certificates from an Issuer in a different namespace. This means you will need to create an Issuer in each namespace you wish to obtain Certificates in.
 
 If you want to create a single Issuer that can be consumed in multiple namespaces, you should consider creating a ClusterIssuer resource. This is almost identical to the Issuer resource, however is non-namespaced so it can be used to issue Certificates across all namespaces.
 
-- Create a **ClusterIssuer**, using this file [02-cluster-issuer.yaml](02-cluster-issuer.yaml)
+> The Cluster Issuer will create a Secret defined as `privateKeySecretRef`. The Secret will be used to store the account's private key.
+> 
+> name: `letsencrypt-staging`
+
+- Create a **ClusterIssuer**, using this file [test-cluster-issuer.yaml](test-cluster-issuer.yaml)
 
     > You should replace this email address with your own.
     >
     > Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account.
 
     ```sh
-    code 02-cluster-issuer.yaml 
+    code test-cluster-issuer.yaml 
     # Replace the email address with your own.
-    kubectl apply -f 02-cluster-issuer.yaml 
+    kubectl apply -f test-cluster-issuer.yaml 
     kubectl get clusterissuer -A
     ```
     <img src="images/image-08.png" alt="drawing" width="600"/>
 
-## 1. Testing the certificate manager without TLS encrypted connection
+## 2. Testing the certificate manager without TLS encrypted connection
 
 - Create a namespace called test-web
     ```sh
@@ -160,7 +162,7 @@ If you want to create a single Issuer that can be consumed in multiple namespace
     kubectl delete -f test1-b-ingress.yaml
     ```
 
-## 2. Testing the certificate manager with TLS encrypted connection
+## 3. Testing the certificate manager with TLS encrypted connection
 
 - Create a new ingress resource using this file [test2-a-ingress.yaml](test2-a-ingress.yaml).
 
@@ -198,7 +200,7 @@ If you want to create a single Issuer that can be consumed in multiple namespace
     kubectl delete -f test2-a-ingress.yaml
     kubectl delete svc nginx-deploy-main -n test-web
     kubectl delete -f test1-a-deployment.yaml
-    kubectl delete secret lets-encrypt-test -n test-web
+    kubectl delete -f test-cluster-issuer.yaml
     kubectl delete ns test-web
     ```
 

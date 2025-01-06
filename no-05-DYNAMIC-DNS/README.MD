@@ -10,7 +10,7 @@ YouTube video: [[09.02] Certificate for a dynamic DNS domain in Kubernetes throu
 - A Domain name that you own (e.g. NameCheap, Cloudflare, etc)
 - A certificate Manager installed in your Kubernetes cluster (previous step).
 
-## Adjust DNS records in Cloudflare
+## Adjust DNS records and create API Key in Cloudflare
 
 - You must adjust DNS to Cloudflare nameserver by changing your DNS record point to Cloudflare. This example shows chaning NameCheap to point to Cloudflare.
 
@@ -72,9 +72,13 @@ YouTube video: [[09.02] Certificate for a dynamic DNS domain in Kubernetes throu
     <img src="images/image-04.png" alt="drawing" width="800"/>
 
 
-# Create a Kubernetes config for deploying ClustterIssuer with Cloudflare DNS proof
+# Deploy a ClusterIssuer and a Certificate with Cloudflare DNS proof
 
-Official Documentation: [DNS01 Cloudflare](https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/)
+Official Documentation: [Cert-Manager DNS01 for Cloudflare](https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/)
+
+> The Cluster Issuer will create a Secret named: `cluster-issuer-account-key`
+>
+> The API Token used to connect to CloudFlare will be named: `cloudflare-api-token`
 
 - Create a **Secret** and a **ClusterIssuer**, using this file [02-cluster-issuer-cloudflare.yaml](02-cluster-issuer-cloudflare.yaml)
 
@@ -86,12 +90,51 @@ Official Documentation: [DNS01 Cloudflare](https://cert-manager.io/docs/configur
     code 02-cluster-issuer-cloudflare.yaml 
     # Replace the email address with your own.
     kubectl apply -f 02-cluster-issuer-cloudflare.yaml
-    kubectl get clusterissuer -A
-    kubectl get secrets -A
+    kubectl get clusterissuer -A -o wide
+    kubectl get secrets -A -o wide
     ```
-    <img src="images/image-10.png" alt="drawing" width="900"/>
+    <img src="images/image-11.png" alt="drawing" width="800"/>
 
-    <img src="images/image-11.png" alt="drawing" width="900"/>
+    <img src="images/image-10.png" alt="drawing" width="800"/>
+
+
+    > **Ready Status of the ClusterIssuer:**
+    >
+    > -	True: The ClusterIssuer is properly configured and ready to issue certificates.
+    >
+    > - False: There is an issue preventing the ClusterIssuer from functioning (e.g., misconfiguration, unreachable endpoint).
+    > 
+    > - Unknown: The status of readiness is unknown, possibly due to a lack of initialization.
+
+- Before creating the certificate on CloudFlare, You have to create private DNS to the names mentioned in the manifest above like the following:
+
+https://ruanbekker.hashnode.dev/cert-manager-dns-challenge-with-cloudflare-on-kubernetes#heading-cert-manager
+
+
+
+
+
+
+
+- Request a certificate, using your domain, i.e. `example.dev` hosted in CloudFlare, creating a wildcard certificate on the sub-domain *.nginx.example.com.
+
+    Certificates are scoped on a namespace level, and ClusterIssuer's are cluster-wide, therefore you can prefix your certificate with the namespace.
+
+    Create the certificate using this file [03-certificate-cloudflare.yaml](03-certificate-cloudflare.yaml)
+
+    > You should replace this name with your own DNS entry
+
+    ```sh
+
+    ```
+
+
+
+
+
+
+
+# To be changed
 
 ## Testing the certificate manager with TLS encrypted connection
 
