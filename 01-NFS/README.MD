@@ -213,9 +213,10 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
 
     ![alt text](images/image-18.png)
 
-- Login to your NFS server and make sure the file was created.
+- SSH to your NFS server and make sure the file was created.
 
     ```sh
+    ssh homelab-k8s-nfs
     cd /mnt/volume1/kubedata-prod/nfsprov/
     cd default-testclaim-pvc-<automatically_assigned_ID>
     ls -lht

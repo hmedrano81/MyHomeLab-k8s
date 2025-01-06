@@ -53,7 +53,9 @@ Port	        | Protocol	| Component                 |Purpose
 
     <img src="images/image-07.png" alt="drawing" width="750"/>
 
-> ⚠️ **Warning**: If you are on EKS and you are using a custom CNI such as Weave or Calico, the Kubernetes API server (which is in its own node) might not be able to reach the webhook pod. 
+> ⚠️ **Warning**: 
+> 
+> If you are on EKS and you are using a custom CNI such as Weave or Calico, the Kubernetes API server (which is in its own node) might not be able to reach the webhook pod. 
 > 
 > This happens because the control plane cannot be configured to run on a custom CNI on EKS, meaning that the CNIs cannot enable connectivity between the API server and the pods running in the worker nodes.
 >
@@ -96,7 +98,7 @@ If you want to create a single Issuer that can be consumed in multiple namespace
 
 > The Cluster Issuer will create a Secret defined as `privateKeySecretRef`. The Secret will be used to store the account's private key.
 > 
-> name: `letsencrypt-staging`
+> Select `name: letsencrypt-staging`, as if the production environment is abused, your IP address may be banned after several failed attempts.
 
 - Create a **ClusterIssuer**, using this file [test-cluster-issuer.yaml](test-cluster-issuer.yaml)
 

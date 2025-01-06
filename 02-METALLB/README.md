@@ -148,10 +148,10 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
 
   ![alt text](images/image-14.png)
 
-## Verification: Create an IP Address Pool
+## Create an internal IP Address Pool
 Official documentation: [MetalLB Configuration](https://metallb.io/configuration/)
 
-The installation manifest does not include a configuration file. MetalLB’s components will still start, but will remain idle until you start deploying resources. 
+The installation manifest does not include a configuration file. MetalLB’s components will still start without the LoadBalancer, and it will remain idle until you start deploying resources. 
 
 - Make sure your DHCP server on your network excludes the IP Address pool defined for MetalLB.
 
@@ -169,7 +169,7 @@ The installation manifest does not include a configuration file. MetalLB’s com
   ![alt text](images/image-17.png)
   ![alt text](images/image-18.png)
 
-## Verification: Layer 2 mode advertising
+## Create a Layer 2 mode advertising
 
 https://metallb.io/configuration/_advanced_l2_configuration/
 

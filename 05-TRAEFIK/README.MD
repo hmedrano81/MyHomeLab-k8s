@@ -8,10 +8,15 @@ Official Documentation:
 
 - [Traefik & Kubernetes](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
 
-YouTube Video: [How to use Traefik as a Reverse Proxy in Kubernetes? // Ingress Controller Tutorial](https://www.youtube.com/watch?v=n5dpQLqOfqM&t=270s)
+YouTube Videos: 
+- [How to use Traefik as a Reverse Proxy in Kubernetes? // Ingress Controller Tutorial](https://www.youtube.com/watch?v=n5dpQLqOfqM&t=270s)
+
+- [Kubernetes - On prem install - Load Balancer and Ingress Controller](https://www.youtube.com/watch?v=9iJLw7pUCIk)
 
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
+- A NFS server with a NFS provisioner chart installed and working.
+- Certificate Manager is not required.
 - `kubectl` command-line tool configured to interact with your cluster
 - `helm` command-line tool installed on your local machine version 3.9+
 
@@ -55,16 +60,17 @@ YouTube Video: [How to use Traefik as a Reverse Proxy in Kubernetes? // Ingress 
 
 - Create the Cloudflare credentials using this file [01-traefik-credentials.yaml](01-traefik-credentials.yaml)
 
-    > You should replace this email address with your own.
-    >
-    > You should replace this API key with your own.
+    > ⚠️ **Warning**: 
+    > 
+    > You should replace this email address and API key with your own, on the traefik-credentials yaml file.
 
     ```sh
+    code 01-traefik-credentials.yaml
+    # Replace the email address and API Key with your own.
     kubectl apply -f 01-traefik-credentials.yaml
     kubectl describe secrets cloudflare-credentials -n traefik
     ```
     <img src="images/image-11.png" alt="drawing" width="800"/>
-
 
 ## Download the traefik Helm Repository and modify the configuration
 
@@ -81,21 +87,56 @@ YouTube Video: [How to use Traefik as a Reverse Proxy in Kubernetes? // Ingress 
     ```
     <img src="images/image-02.png" alt="drawing" width="1000"/>
 
-- Deploy the traefik helm chart, using this file [02-traefik-arguments.yaml](02-traefik-arguments.yaml)
+- Deploy the traefik helm chart, using this file [02-traefik-custom-values.yaml](02-traefik-custom-values.yaml). 
+
+    Here is a template for the traefik values: [traefik-helm-chart/traefik
+/values.yaml](https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml)
+
+    > ⚠️ **Warning**: 
+    > 
+    > 1. You should replace this email address with your own, on the traefik-custom-values yaml file.
+    >
+    > 2. Make sure to set the LoadBalancer Class is set to "metallb", and matches the LoadBalancer Class defined before: [02-metallb-values.yaml](../02-METALLB/02-metallb-values.yaml). This should ensure an External IP has been assigned to the traefik service.
+
     ```sh
-    helm install traefik traefik/traefik --namespace traefik --values=02-traefik-arguments.yaml
+    code 02-traefik-custom-values.yaml
+    # Replace the email address with your own.
+    helm install traefik traefik/traefik --namespace traefik --values=02-traefik-custom-values.yaml
     watch kubectl get all -n traefik
     ```
->
->
->
->
->
->
-> Warning  BackOff    6s (x5 over 53s)  kubelet            Back-off restarting failed container volume-permissions in pod traefik-57546f85d8-4p8vz_traefik(bae82a75-7d8c-4d2a-a8bd-dbb195865979)   
->
->
-> PersistentVolumeClaim
->
->
->
+
+    <img src="images/image-14.png" alt="drawing" width="900"/>
+
+- If the installation fails, use this command to uninstall the helm, make sure all the resources have been removed and try again.
+
+    ```sh
+    helm uninstall traefik -n traefik
+    watch kubectl get all -n traefik
+    ```
+
+- Confirm a service type LoadBalancer has been created and an external-IP has been assigned. Then open a browser and navigate to https://<external-ip>. You should be able to open a page indicating `404 page not found` message.
+
+    <img src="images/image-15.png" alt="drawing" width="900"/>
+
+- SSH to your NFS server and make sure the `SUCCESS` and `acme-cloudflare.json` files were created.
+
+    ```sh
+    ssh homelab-k8s-nfs
+    cd /mnt/volume1/kubedata-prod/nfsprov/
+    cd traefik-traefik-pvc-<automatically_assigned_ID>
+    ls -lht
+    ```
+    <img src="images/image-13.png" alt="drawing" width="900"/>
+
+## Deployment of a Cluster Issuer using Let's Encrypt
+
+TO DO: Change the instructions on the [01-cert-manager-values.yaml](../04-CERTMANAGER/01-cert-manager-values.yaml) to enable CRDs.
+
+Test it all again!
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.16.2 \
+  --set crds.enabled=true
