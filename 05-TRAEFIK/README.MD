@@ -1,5 +1,4 @@
-
-# Deploying Traefik Ingress Controller in Kubernetes
+# Deploying an Ingress Controller using Traefik in Kubernetes
 
 Official Documentation: 
 

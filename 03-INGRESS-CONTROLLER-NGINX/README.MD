@@ -33,7 +33,7 @@ There are several Ingress Controllers available. In this tutorial, we will use N
 
 - Download the values file to configure the helm chart.
     ```sh
-    cd ~/Documents/MyHomeLab-k8s/03-INGRESS-CONTROLLER/
+    cd ~/Documents/MyHomeLab-k8s/03-INGRESS-CONTROLLER-NGINX/
     helm show values nginx/ingress-nginx > 02-nginx-values.yaml
     ```
 
