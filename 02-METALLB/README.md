@@ -92,29 +92,23 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
     helm show values metallb/metallb > 02-metallb-values.yaml
     ```
 
-- Then open this file in a editor, such as vim or Visual Studio code, and modify the configuration.
+- Then open this file in a editor, such as vim or Visual Studio code, and modify the following entries in the configuration.
 
-- Modify **loadBalancerClass**
+  - `loadBalancerClass: "metallb"` (A name for your class)
 
-  - loadBalancerClass: (A name for your class, such as metallb)
+    ![alt text](images/image-05.png)
 
-  ![alt text](images/image-05.png)
-
-- Modify the **controller** configuration.
-
-  - webhookMode: enabled
+  - `controller.webhookMode: enabled`
   
-  ![alt text](images/image-16.png)
+    ![alt text](images/image-16.png)
 
-  - serviceAccount > name: (A name for your controller's service account, such as metallb-controller-manager)
+  - `controller.serviceAccount.name: "metallb-controller-manager"` (A name for your controller's service account)
 
-  ![alt text](images/image-06.png)
+    ![alt text](images/image-06.png)
 
-- Modify the **speaker** configuration.
+  - `speaker.serviceAccount.name: "metallb-speaker-manager"` (A name for your speaker's service account
 
-  - serviceAccount > name: (A name for your speaker's service account, such as metallb-speaker-manager)
-
-  ![alt text](images/image-07.png)
+    ![alt text](images/image-07.png)
 
 
 ## Install the MetalLB Helm chart

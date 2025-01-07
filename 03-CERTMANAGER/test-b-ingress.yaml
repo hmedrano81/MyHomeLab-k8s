@@ -3,7 +3,15 @@ kind: Ingress
 metadata:
   name: ingress-resource
   namespace: test-web
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
+  tls:
+  - hosts:
+    - testing-cert.com
+    # This is the name of the secret where the certificate will be saved
+    secretName: test-letsencrypt-staging-secret
   ingressClassName: nginx
   rules:
   - host: testing-cert.com
