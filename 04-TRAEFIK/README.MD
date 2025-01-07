@@ -72,7 +72,7 @@ YouTube Videos:
     ```
     <img src="images/image-11.png" alt="drawing" width="800"/>
 
-## Download the traefik Helm Repository and modify the configuration
+## Download the traefik Helm Repository, modify the configuration and deploy it
 
 - From your laptop with access the the Kubernetes Cluster, add the traefik repository and update it.
     ```sh
@@ -89,8 +89,7 @@ YouTube Videos:
 
 - Deploy the traefik helm chart, using this file [02-traefik-custom-values.yaml](02-traefik-custom-values.yaml). 
 
-    Here is a template for the traefik values: [traefik-helm-chart/traefik
-/values.yaml](https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml)
+    Here is a template for the traefik values: [traefik-helm-chart/traefik/values.yaml](https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml)
 
     > ⚠️ **Warning**: 
     > 
@@ -114,6 +113,16 @@ YouTube Videos:
     watch kubectl get all -n traefik
     ```
 
+    > Note:
+    >The Traefik Helm chart will deploy the following Kubernetes resources:
+    > 1. ServiceAccount - Used for Traefik's identity in the cluster
+    > 2. ClusterRole - Defines the permissions Traefik needs across the cluster
+    > 3. ClusterRoleBinding - Binds the ClusterRole to the ServiceAccount
+    > 4. Deployment - The main Traefik controller deployment
+    > 5. IngressClass - Defines Traefik as an available ingress controller class
+    > 6. Service - The service that exposes Traefik to handle incoming traffic
+
+
 - Confirm a service type LoadBalancer has been created and an external-IP has been assigned. Then open a browser and navigate to https://<external-ip>. You should be able to open a page indicating `404 page not found` message.
 
     <img src="images/image-15.png" alt="drawing" width="900"/>
@@ -128,15 +137,3 @@ YouTube Videos:
     ```
     <img src="images/image-13.png" alt="drawing" width="900"/>
 
-## Deployment of a Cluster Issuer using Let's Encrypt
-
-TO DO: Change the instructions on the [01-cert-manager-values.yaml](../04-CERTMANAGER/01-cert-manager-values.yaml) to enable CRDs.
-
-Test it all again!
-
-helm install \
-  cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --create-namespace \
-  --version v1.16.2 \
-  --set crds.enabled=true
