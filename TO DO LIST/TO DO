@@ -1,0 +1,15 @@
+Tasks:
+- Traefik Dashboard. Valid certificate with Pebbel?
+- Middle wares https://www.youtube.com/watch?v=O1YeaEW3Tms&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=4  
+- Enable redirection from HTTP to HTTPS
+- Create more services as NGINX or Teleport and direct the application via Traefik reserve proxy.
+- Open 443 port on my home router's firewall
+- Prometheus / Grafana set up
+
+
+Video steps pending:
+[NO] I need to deploy the self signed as well / remove it?
+[NO] Deploy docker-registry-full-deployment.yaml?
+
+Others:
+Nice to have: 
