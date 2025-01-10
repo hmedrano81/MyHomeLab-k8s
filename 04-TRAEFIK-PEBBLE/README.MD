@@ -6,6 +6,8 @@ Official Documentation:
 
 - [Traefik: Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 
+- [Traefik: TLS] https://doc.traefik.io/traefik/https/tls/
+
 - [Traefik & Kubernetes](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
 
 YouTube Videos: 
