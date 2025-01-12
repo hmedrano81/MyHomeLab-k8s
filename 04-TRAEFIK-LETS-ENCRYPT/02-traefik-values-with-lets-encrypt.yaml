@@ -205,9 +205,7 @@ ingressRoute:
     # -- Additional ingressRoute middlewares (e.g. for authentication)
     middlewares: 
       - name: auth
-        basicAuth:
-          secret: traefik-credentials 
-        
+        namespace: traefik
     # -- TLS options (e.g. secret containing certificate)
     tls: {}
   healthcheck:
@@ -738,11 +736,7 @@ ports:
       keepAliveMaxRequests:         # @schema type:[integer, null]; minimum:0
       keepAliveMaxTime:             # @schema type:[string, integer, null]
     # --  See [upstream documentation](https://doc.traefik.io/traefik/routing/entrypoints/#tls)
-    tls:
-      enabled: true
-      options: ""
-      certResolver: "cloudflare"
-      domains: []
+    tls: {}
     # -- One can apply Middlewares on an entrypoint
     # https://doc.traefik.io/traefik/middlewares/overview/
     # https://doc.traefik.io/traefik/routing/entrypoints/#middlewares

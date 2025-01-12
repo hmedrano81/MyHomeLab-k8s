@@ -95,7 +95,7 @@ Port	        | Protocol	| Component                 |Purpose
     watch kubectl get all -n cert-manager
     ```
 
-## Deploy of the Cluster Issuers
+## Testing deploying Cluster Issuers
 
 An Issuer is a namespaced resource, and it is not possible to issue certificates from an Issuer in a different namespace. This means you will need to create an Issuer in each namespace you wish to obtain Certificates in.
 
@@ -107,7 +107,7 @@ If you want to create a single Issuer that can be consumed in multiple namespace
 
 - Create a **Staging ClusterIssuer**, using this file [02-cluster-issuer-letsencrypt-staging.yaml](02-cluster-issuer-letsencrypt-staging.yaml)
 
-    Additonally, create a **Production ClusterIssuer**, using this file [03-cluster-issuer-letsencrypt-prod.yaml](03-cluster-issuer-letsencrypt-prod.yaml)
+- Additonally, create a **Production ClusterIssuer**, using this file [03-cluster-issuer-letsencrypt-prod.yaml](03-cluster-issuer-letsencrypt-prod.yaml)
 
     > ⚠️ **Warning**: 
     >
@@ -133,7 +133,6 @@ If you want to create a single Issuer that can be consumed in multiple namespace
     ```
     <img src="images/image-16.png" alt="drawing" width="700"/>
 
-
 ## Testing the certificate manager with TLS encrypted connection
 
 - Create a namespace called test-web
@@ -152,7 +151,7 @@ If you want to create a single Issuer that can be consumed in multiple namespace
 - Expose the deployment as a **service** on port 80.
     ```sh
     kubectl expose deploy nginx-deploy-main -n test-web --port 80
-    watch kubectl get all -n test-web
+    kubectl describe svc nginx-deploy-main -n test-web
     ```
     <img src="images/image-09.png" alt="drawing" width="750"/>
 
@@ -207,6 +206,8 @@ If you want to create a single Issuer that can be consumed in multiple namespace
     kubectl delete -f test-b-ingress.yaml -n test-web
     kubectl delete svc nginx-deploy-main -n test-web
     kubectl delete -f test-a-deployment.yaml -n test-web
+    kubectl delete clusterissuers letsencrypt-staging
+    kubectl delete clusterissuers letsencrypt-prod
     kubectl delete ns test-web
     ```
 

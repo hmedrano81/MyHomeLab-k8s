@@ -9,7 +9,7 @@ Traefix cloud deployment can automatically handle the TLS certificate for you.
 
 However, when Traefik Ingress controller is installed on bare-metal will try to conect Let's Encrypt Server out in the internet to request a certificate. 
 
-Let's encrypt ACME server won't be able to connect back to your Traefik server yo verify your identity. That's done, using either HTTP, TLS or DNS challenge.
+Let's encrypt ACME server won't be able to connect back to your Traefik server to verify your identity using TLS challenge, as it would need a connection from the internet back to Traefik server.
 
 So, we'll use pebble, with is a ACME server for testing purposes. 
 

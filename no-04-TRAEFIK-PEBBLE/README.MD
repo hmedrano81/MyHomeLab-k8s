@@ -67,6 +67,10 @@ YouTube Videos:
 
 - Then open the `02-traefik-values-with-pebble.yaml` file again, modify the following entries in the configuration.
 
+    > ⚠️ **Warning**: 
+    >
+    > You should replace this email address with your own, on the traefik-custom-values yaml file.
+
     - `additionalArguments:` (Remove the square brackets and add the arguments as follows)
 
         <img src="images/image-35.png" alt="drawing" width="900"/>
@@ -168,11 +172,6 @@ YouTube Videos:
     ls -lht
     ```
     <img src="images/image-47.png" alt="drawing" width="700"/>
-
-
-
-
-
 
 
 ## Enable Traefik Dashboard Authorisation

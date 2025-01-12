@@ -1,15 +1,16 @@
 Tasks:
-- Traefik Dashboard. Valid certificate with Pebbel?
-- Middle wares https://www.youtube.com/watch?v=O1YeaEW3Tms&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=4  
-- Enable redirection from HTTP to HTTPS
+- Traefik Dashboard. Signed certificates with Let's Encrypt. https://ruanbekker.hashnode.dev/cert-manager-dns-challenge-with-cloudflare-on-kubernetes#heading-cert-manager
+   Remember to remove email from: - --certificatesresolvers.cloudflare.acme.email=<your_email>
 - Create more services as NGINX or Teleport and direct the application via Traefik reserve proxy.
-- Open 443 port on my home router's firewall
+- Network -> Proxy. This should communicate to the other pods, without exposing it to the internet.
+- insecureSkipVerify: true (Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX)
+- Middlewares https://www.youtube.com/watch?v=O1YeaEW3Tms&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=4  
+  Enable redirection from HTTP to HTTPS
+- What happens it MetalLB assigns another IP address?
 - Prometheus / Grafana set up
 
 
 Video steps pending:
+https://github.com/BuildAndDestroy/container_toolkit/blob/master/docker-registry/full_deployment.yaml
 [NO] I need to deploy the self signed as well / remove it?
 [NO] Deploy docker-registry-full-deployment.yaml?
-
-Others:
-Nice to have: 

@@ -1,6 +1,6 @@
 # Deploying an Ingress Controller using Traefik in Kubernetes - Certificates signed by Let's Encrypt
 
-Official Documentation: 
+Documentation: 
 
 - [Traefik: Install using the Helm Chart](https://doc.traefik.io/traefik/getting-started/install-traefik/#use-the-helm-chart)
 
@@ -9,17 +9,15 @@ Official Documentation:
 - [Traefik & Kubernetes](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
 
 YouTube Videos: 
+
 - [How to use Traefik as a Reverse Proxy in Kubernetes? // Ingress Controller Tutorial](https://www.youtube.com/watch?v=n5dpQLqOfqM&t=270s)
 
 - [Kubernetes - On prem install - Load Balancer and Ingress Controller](https://www.youtube.com/watch?v=9iJLw7pUCIk)
-
-- [SSL Certificates Made EASY With Traefik Proxy, Clouflare, and Let's Encrypt - Tutorial](https://www.youtube.com/watch?v=XH9XgiVM_z4)
 
 
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
 - A NFS server with a NFS provisioner chart installed and working.
-- Certificate Manager is not required.
 - `kubectl` command-line tool configured to interact with your cluster
 - `helm` command-line tool installed on your local machine version 3.9+
 
@@ -96,12 +94,6 @@ YouTube Videos:
     - `ports.web.redirectTo: websecure` (Optional: Redirect HTTP to HTTPS. Not enabled this time).
     
          <img src="images/image-20.png" alt="drawing" width="900"/>
-
-    - `ports.web.websecure.tls.enabled: true`
-
-        `ports.web.websecure.tls.certResolver: cloudflare`
-
-         <img src="images/image-21.png" alt="drawing" width="900"/>
 
     - `persistence.enabled: true`
 
@@ -222,15 +214,15 @@ YouTube Videos:
 
     <img src="images/image-30.png" alt="drawing" width="1100"/>
 
-- Then open the `02-traefik-values.yaml` file again, modify the following entries in the configuration.
+- Then open the `02-traefik-values-with-lets-encrypt.yaml` file again, modify the following entries in the configuration.
 
     - `ingressRoute.dashboard.middlewares: auth` (Remove the square brackets and add the following information)
 
     <img src="images/image-33.png" alt="drawing" width="1000"/>
 
--  Upgrade the Traefik helm chart, using this file [02-traefik-values.yaml](02-traefik-values.yaml).
+-  Upgrade the Traefik helm chart, using this file [02-traefik-values-with-lets-encrypt.yaml](02-traefik-values-with-lets-encrypt.yaml).
     ```sh
-    helm upgrade traefik traefik/traefik --namespace traefik --values=02-traefik-values.yaml
+    helm upgrade traefik traefik/traefik --namespace traefik --values=02-traefik-values-with-lets-encrypt.yaml
     ```
 
 - Confirm the IngressRoute has been modified
@@ -243,31 +235,3 @@ YouTube Videos:
 
     <img src="images/image-32.png" alt="drawing" width="1100"/>
 
-
-## Adjust DNS records and create API Key in Cloudflare
-
-- You must adjust DNS to Cloudflare nameserver by changing your DNS record point to Cloudflare. This example shows chaning NameCheap to point to Cloudflare.
-
-    Documentation: [How to set up DNS records for your domain in a Cloudflare account](https://www.namecheap.com/support/knowledgebase/article.aspx/9607/2210/how-to-set-up-dns-records-for-your-domain-in-a-cloudflare-account/)
-
-    <img src="images/image-05.png" alt="drawing" width="1000"/>
-
-- Create a Cloudflare API token for use in cert-manager. Create and verify the domain you want to create an SSL certificate. 
-
-    Documentation: [Lego > DNS Providers > Cloudflare](https://go-acme.github.io/lego/dns/cloudflare/)
-
-    - Go to [Cloudflare dashboard](https://dash.cloudflare.com/) > [My Profile](https://dash.cloudflare.com/profile) (Right top corner) > API Tokens. 
-    
-        <img src="images/image-06.png" alt="drawing" width="1000"/>
-
-    - Click Create Token button selecting the "Edit Zone DNS" option.
-
-        <img src="images/image-07.png" alt="drawing" width="700"/>
-
-    - Then, fill Permission section form below.
-
-        <img src="images/image-08.png" alt="drawing" width="700"/>
-
-    - Take note of the API Token generated.
-
-        <img src="images/image-09.png" alt="drawing" width="700"/>

@@ -1,0 +1,26 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+    name: dns-challenge-acme-prod
+spec:
+    acme:
+        # You should replace this email address with your own.
+        # Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account
+        server: https://acme-v02.api.letsencrypt.org/directory
+        email: <your-email>
+        privateKeySecretRef:
+            # Secret resource that will be used to store the account's private key.
+            name: dns-challenge-acme-prod
+        #Add a DNS01 single challenge solver
+        solvers:
+        - dns01:
+            cloudflare:
+              # You should replace this email address with your own.
+              email: <your-email>
+              apiTokenSecretRef:
+                # This is name of the secret that contains the Cloudflare API token
+                key: apiKey
+                name: cloudflare-credentials
+          selector:
+            dnsZones:
+              - "<your_domain>"

@@ -68,15 +68,19 @@ deployment:
   #   hostPath:
   #     path: /var/run/statsd-exporter
   # -- Additional initContainers (e.g. for setting file permission as shown below)
-  initContainers: []
-  # The "volume-permissions" init container is required if you run into permission issues.
-  # Related issue: https://github.com/traefik/traefik-helm-chart/issues/396
-  # - name: volume-permissions
-  #   image: busybox:latest
-  #   command: ["sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json"]
-  #   volumeMounts:
-  #     - name: data
-  #       mountPath: /data
+  initContainers:
+    # The "volume-permissions" init container is required if you run into permission issues.
+    # Related issue: https://github.com/traefik/traefik-helm-chart/issues/396
+    - name: volume-permissions
+      image: busybox:latest
+      command:
+        - "/bin/sh"
+      args:
+        - "-c"
+        - "touch /ssl-certs/SUCCESS && chmod -Rv 600 /ssl-certs/* && exit 0 || exit 1"
+      volumeMounts:
+        - name: ssl-certs
+          mountPath: /ssl-certs
   # -- Use process namespace sharing
   shareProcessNamespace: false
   # -- Custom pod DNS policy. Apply if `hostNetwork: true`
@@ -189,7 +193,8 @@ ingressRoute:
     labels: {}
     # -- The router match rule used for the dashboard ingressRoute
     #matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
-    matchRule: Host(`traefik.example.com`)
+    #matchRule: Host(`traefik.example.com`)
+    matchRule: Host(`homelab-traefik.med2engineering.dev`)
     # -- The internal service used for the dashboard ingressRoute
     services:
       - name: api@internal
@@ -201,11 +206,12 @@ ingressRoute:
     # -- Additional ingressRoute middlewares (e.g. for authentication)
     middlewares: 
       - name: auth
-        basicAuth:
-          secret: traefik-credentials 
+        namespace: traefik
+    # -- TLS options (e.g. secret containing certificate)
     tls:
-      enabled: true
-      certResolver: "pebble"
+      certResolver: "cloudflare"
+      domains:
+        - main: "homelab-traefik.med2engineering.dev"
   healthcheck:
     # -- Create an IngressRoute for the healthcheck probe
     enabled: false
@@ -337,10 +343,7 @@ providers:  # @schema additionalProperties: false
 # - "--providers.file.filename=/config/dynamic.toml"
 # - "--ping"
 # - "--ping.entrypoint=web"`
-volumes:
- - name: pebble
-   mountPath: "/certs"
-   type: configMap
+volumes: []
 # - name: public-cert
 #   mountPath: "/certs"
 #   type: secret
@@ -602,19 +605,28 @@ globalArguments:
 # See [CLI Reference](https://docs.traefik.io/reference/static-configuration/cli/)
 # Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
 additionalArguments:
-  - --certificatesresolvers.pebble.acme.tlsChallenge=true
-  - --certificatesresolvers.pebble.acme.email=<your_email>
-  - --certificatesresolvers.pebble.acme.storage=/data/acme.json
-  - --certificatesresolvers.pebble.acme.caserver=https://pebble.traefik/dir
-
+  - --certificatesresolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
+  #- --certificatesresolvers.cloudflare.acme.email=<your_email>
+  - --certificatesresolvers.cloudflare.acme.email=hmedrano81@gmail.com
+  - --certificatesresolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1
+  - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+#
 #  - "--providers.kubernetesingress.ingressclass=traefik-internal"
 #  - "--log.level=DEBUG"
 
 # -- Additional Environment variables to be passed to Traefik's binary
 # @default -- See _values.yaml_
 env:
-  - name: LEGO_CA_CERTIFICATES
-    value: "/certs/root-cert.pem"
+  - name: CF_API_EMAIL
+    valueFrom:
+      secretKeyRef:
+        key: email
+        name: cloudflare-credentials
+  - name: CF_API_KEY
+    valueFrom:
+      secretKeyRef:
+        key: apiKey
+        name: cloudflare-credentials
 
 # -- Environment variables to be passed to Traefik's binary from configMaps or secrets
 envFrom: []
@@ -732,8 +744,9 @@ ports:
     tls:
       enabled: true
       options: ""
-      certResolver: "pebble"
-      domains: []
+      certResolver: "cloudflare"
+      domains:
+        - main: "homelab-traefik.med2engineering.dev"
     # -- One can apply Middlewares on an entrypoint
     # https://doc.traefik.io/traefik/middlewares/overview/
     # https://doc.traefik.io/traefik/routing/entrypoints/#middlewares
@@ -820,14 +833,14 @@ persistence:
   # -- Enable persistence using Persistent Volume Claims
   # ref: http://kubernetes.io/docs/user-guide/persistent-volumes/.
   # It can be used to store TLS certificates along with `certificatesResolvers.<name>.acme.storage`  option
-  enabled: false
-  name: data
+  enabled: true
+  name: ssl-certs
   existingClaim: ""
   accessMode: ReadWriteOnce
   size: 128Mi
   storageClass: ""
   volumeName: ""
-  path: /data
+  path: /ssl-certs
   annotations: {}
   # -- Only mount a subpath of the Volume into the pod
   subPath: ""
