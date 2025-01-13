@@ -1,8 +1,6 @@
 Tasks:
-- Middlewares https://www.youtube.com/watch?v=O1YeaEW3Tms&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=4  
-- Enable redirection from HTTP to HTTPS
 
-- Create more services as NGINX or Teleport and direct the application via Traefik reserve proxy.
+- Create more services as NGINX or Teleport and direct the application via Traefik reserve proxy. https://www.youtube.com/watch?v=6_wRqKmx7QU&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=2
 - Network -> Proxy. This should communicate to the other pods, without exposing it to the internet.
 - insecureSkipVerify: true (Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX)
 

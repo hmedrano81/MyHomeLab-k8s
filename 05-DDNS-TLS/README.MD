@@ -16,6 +16,33 @@ YouTube Videos:
 
 - [DDNS on a Raspberry Pi using the Cloudflare API (Dynamic DNS)](https://youtu.be/rI-XxnyWFnM?si=wAw5iDKA4pNoabVZ)
 
+
+## File's replacement summary
+- renew_ip_cloudflare.sh
+    - Replace all the authentication parameters 
+
+- [01-cert-manager-cloudflare-credentials.yaml](01-cert-manager-cloudflare-credentials.yaml)
+    - Replace `<your_cloudflare_email>`
+    - Replace `<your_cloudflare_api_key>`
+
+- [02-cluster-issuer-DNS-Challenge-staging.yaml](02-cluster-issuer-DNS-Challenge-staging.yaml)
+    - Replace `<your_email>`
+    - Replace `<your_domain>`
+
+- [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml)
+    - Replace `<your_domain>`
+
+- [03-cluster-issuer-DNS-Challenge-prod.yaml](03-cluster-issuer-DNS-Challenge-prod.yaml)
+    - Replace `<your_email>`
+    - Replace `<your_domain>`
+
+- [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml)
+    - Replace `<your_domain>`
+
+- [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml)
+    - Replace `<your_email>`
+    - Replace `<your_domain>`
+
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
 - A NFS server with a NFS provisioner chart installed and working.
@@ -181,13 +208,13 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     > ⚠️ **Warning**: 
     >
-    > You should replace this email address with your own.
+    > You should replace this email address and domain with your own.
     >
     > Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account.
 
     ```sh
     code 02-cluster-issuer-DNS-Challenge-staging.yaml
-    # Replace the email address with your own.
+    # Replace the email address and domain with your own.
 
     kubectl apply -f 02-cluster-issuer-DNS-Challenge-staging.yaml
     kubectl get secrets -n cert-manager
@@ -206,7 +233,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     ```sh
     code 03-cluster-issuer-DNS-Challenge-prod.yaml
-    # Replace the email address with your own.
+    # Replace the email address and domain with your own.
 
     kubectl apply -f 03-cluster-issuer-DNS-Challenge-prod.yaml
     kubectl get secrets -n cert-manager
@@ -216,6 +243,10 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     ```
 
 - Create a new **Staging*** certificate using this file [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml).
+
+    > ⚠️ **Warning**: 
+    >
+    > You should replace this domain with your own.
 
     ```sh
     kubectl apply -f test-traefik-certificate-DNS-staging.yaml
@@ -243,6 +274,10 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
 - Create a new **Production** certificate using this file [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml).
 
+    > ⚠️ **Warning**: 
+    >
+    > You should replace this domain with your own.
+
     ```sh
     kubectl apply -f 04-traefik-certificate-DNS-prod.yaml
 
@@ -260,7 +295,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
 
-    -  `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
+    - `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
 
     - `ingressRoute.dashboard.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
 

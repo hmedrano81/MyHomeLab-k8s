@@ -14,6 +14,17 @@ YouTube Videos:
 
 - [Kubernetes - On prem install - Load Balancer and Ingress Controller](https://www.youtube.com/watch?v=9iJLw7pUCIk)
 
+## File's replacement summary
+- [01-traefik-cloudflare-credentials.yaml](01-traefik-cloudflare-credentials.yaml)
+    - Replace email address 
+    - Replace API Key 
+
+- [02-traefik-values-with-lets-encrypt.yaml](02-traefik-values-with-lets-encrypt.yaml)
+    - Replace email address 
+
+- [03-traefik-dashboard-credentials.yaml](03-traefik-dashboard-credentials.yaml)
+    - Replace the Base64 encoded HTTP authentication credential 
+
 
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
@@ -201,7 +212,7 @@ YouTube Videos:
 
     > ⚠️ **Warning**: 
     > 
-    > You should replace Replace the Base64 encoded HTTP authentication credential with your own, on this yaml file.
+    > You should replace the Base64 encoded HTTP authentication credential with your own, on this yaml file.
 
     ```sh
     code 03-traefik-dashboard-credentials.yaml

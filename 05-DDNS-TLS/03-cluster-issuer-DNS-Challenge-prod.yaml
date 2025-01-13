@@ -7,7 +7,7 @@ spec:
         # You should replace this email address with your own.
         # Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account
         server: https://acme-v02.api.letsencrypt.org/directory
-        email: <your-email>
+        email: <your_email>
         privateKeySecretRef:
             # Secret resource that will be used to store the account's private key.
             name: dns-challenge-acme-prod
@@ -16,7 +16,7 @@ spec:
         - dns01:
             cloudflare:
               # You should replace this email address with your own.
-              email: <your-email>
+              email: <your_email>
               apiTokenSecretRef:
                 # This is name of the secret that contains the Cloudflare API token
                 key: apiKey
