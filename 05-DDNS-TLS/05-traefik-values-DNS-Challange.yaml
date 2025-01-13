@@ -192,9 +192,8 @@ ingressRoute:
     # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
     labels: {}
     # -- The router match rule used for the dashboard ingressRoute
-    #matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
     #matchRule: Host(`traefik.example.com`)
-    matchRule: Host(`homelab-traefik.med2engineering.dev`)
+    matchRule: Host(`homelab-traefik.<your_domain>`)
     # -- The internal service used for the dashboard ingressRoute
     services:
       - name: api@internal
@@ -209,9 +208,7 @@ ingressRoute:
         namespace: traefik
     # -- TLS options (e.g. secret containing certificate)
     tls:
-      certResolver: "cloudflare"
-      domains:
-        - main: "homelab-traefik.med2engineering.dev"
+      secretName: mydomain-wildcard-cluster-cert-prod-tls
   healthcheck:
     # -- Create an IngressRoute for the healthcheck probe
     enabled: false
@@ -606,8 +603,7 @@ globalArguments:
 # Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
 additionalArguments:
   - --certificatesresolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
-  #- --certificatesresolvers.cloudflare.acme.email=<your_email>
-  - --certificatesresolvers.cloudflare.acme.email=hmedrano81@gmail.com
+  - --certificatesresolvers.cloudflare.acme.email=<your_email>
   - --certificatesresolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1
   - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
 #
@@ -743,10 +739,10 @@ ports:
     # --  See [upstream documentation](https://doc.traefik.io/traefik/routing/entrypoints/#tls)
     tls:
       enabled: true
+      secretName: mydomain-wildcard-cluster-cert-prod-tls
       options: ""
-      certResolver: "cloudflare"
-      domains:
-        - main: "homelab-traefik.med2engineering.dev"
+      certResolver: ""
+      domains: []
     # -- One can apply Middlewares on an entrypoint
     # https://doc.traefik.io/traefik/middlewares/overview/
     # https://doc.traefik.io/traefik/routing/entrypoints/#middlewares

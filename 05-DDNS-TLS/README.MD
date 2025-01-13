@@ -4,6 +4,8 @@ Documentation:
 
 - [Traefik: Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 
+- [Cert Manager: DNS Validation](https://cert-manager.io/docs/tutorials/acme/dns-validation/)
+
 - [How to set up DNS records for your domain in a Cloudflare account](https://www.namecheap.com/support/knowledgebase/article.aspx/9607/2210/how-to-set-up-dns-records-for-your-domain-in-a-cloudflare-account/)
     
 - [Cloudflare: Manage DNS records](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)
@@ -87,7 +89,7 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 - Wait about a minute, and try to resolve the name on your laptop
 
     ```sh
-    nslookup traefik.<your_domain>.dev 1.1.1.1
+    dig homelab-traefik.<your_domain> 8.8.8.8
     ```
     <img src="images/image-49.png" alt="drawing" width="1000"/>
 
@@ -135,18 +137,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     # Then restart the crontab service
     systemctl restart cron
     ```
-
-- Create a `CNAME` record in CloudFlare to point to your Traefik Dashboard. this register won't point to the public IP address, but to the record previously created. This also will be proxy and protected by Cloudflare.
-
-    <img src="images/image-53.png" alt="drawing" width="1000"/>
-
-- Wait about a minute, and try to resolve the new recorn name on your laptop. This time, it will include `homelab-traefik` in front of your domain name.
-
-    ```sh
-    nslookup homelab-traefik.<your_domain>.dev 1.1.1.1
-    ```
-    <img src="images/image-54.png" alt="drawing" width="1000"/>
-
 
 ## Allow HTTPS traffic to your Traefik Server
 
@@ -225,87 +215,74 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     kubectl logs cert-manager-<tab> -n cert-manager --tail 100 -f
     ```
 
-- Create a test new certificate using this file [test-a-certificate.yaml](test-a-certificate.yaml).
-
-    Then confirm the events on the certificate recently created, to confirm this was successfull. The produce a valit certificate by Let's Encrypt may take a few minutes.
+- Create a new **Staging*** certificate using this file [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml).
 
     ```sh
-    kubectl apply -f test-a-certificate.yaml
+    kubectl apply -f test-traefik-certificate-DNS-staging.yaml
+    ```
 
-    watch kubectl describe certificates mydomain-cluster-cert -n traefik
+- Then confirm the events on the certificate recently created, to confirm this was successfull. The produce a valit certificate by Let's Encrypt may take a few minutes.
+
+    ```sh
+    watch kubectl describe certificates mydomain-wildcard-cluster-cert-staging -n traefik
     ```
     <img src="images/image-63.png" alt="drawing" width="1100"/>
 
+- You can also inspect the certificate produced
 
+    ```sh
+    kubectl get secret mydomain-wildcard-cluster-cert-staging-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
+    ```
+    <img src="images/image-64.png" alt="drawing" width="1100"/>
 
+- You can delete the Let's Encrypt **Staging*** certificate.
 
+    ```sh
+    kubectl delete -f test-traefik-certificate-DNS-staging.yaml
+    ```
+
+- Create a new **Production** certificate using this file [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml).
+
+    ```sh
+    kubectl apply -f 04-traefik-certificate-DNS-prod.yaml
+
+    watch kubectl describe certificates mydomain-wildcard-cluster-cert-prod -n traefik
+
+    kubectl get secret mydomain-wildcard-cluster-cert-prod-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
+    ```
+
+    <img src="images/image-65.png" alt="drawing" width="1100"/>
 
 
 ## Update the Traefik deployment with a valid TLS certificate
 
+- Make a copy of the Traefik Values file, or use this file [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml), and modify the following entries in the configuration.
 
-the certificate should be created using the class traefik?
+    > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
 
-04-traefik-values-DNS-Challange.yaml
+    -  `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
 
+    - `ingressRoute.dashboard.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
 
-as
+    <img src="images/image-66.png" alt="drawing" width="1100"/>
 
     - `ports.web.websecure.tls.enabled: true`
 
-    - `ports.web.websecure.tls.certResolver: cloudflare`
+    - `ports.web.websecure.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
 
-    - `ingressRoute.dashboard.tls.certResolver: cloudflare`
+    <img src="images/image-67.png" alt="drawing" width="1100"/>
 
-    -  matchRule: Host(`homelab-traefik.med2engineering.dev`)
-
-
-
-IngressRoute:
-
-    tls:
-      certResolver: "cloudflare"
-      domains:
-        - main: "homelab-traefik.med2engineering.dev"
-          sans:
-            - "*.med2engineering.dev"
-
-
-
-ports:
-  websecure:
-    tls:
-      certResolver: "cloudflare"
-      domains:
-        - main: "homelab-traefik.med2engineering.dev"
-          sans:
-            - "*.med2engineering.dev"
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-- SSH to your NFS server and delete the file `acme-cloudflare.json`.
+-  Upgrade the Traefik helm chart.
     ```sh
-    ssh homelab-k8s-nfs
-    cd /mnt/volume1/kubedata-prod/nfsprov/
-    cd traefik-traefik-pvc-<automatically_assigned_ID>
-    sudo rm acme-cloudflare.json
+    helm upgrade traefik traefik/traefik --namespace traefik --values=05-traefik-values-DNS-Challange.yaml
     ```
 
--  Upgrade the Traefik helm chart, using this file [02-traefik-values-with-lets-encrypt.yaml](../04-TRAEFIK-LETS-ENCRYPT/02-traefik-values-with-lets-encrypt.yaml).
+- Confirm the IngressRoute has been modified
     ```sh
-    helm upgrade traefik traefik/traefik --namespace traefik --values=02-traefik-values-with-lets-encrypt.yaml
+    kubectl describe ingressroute traefik-dashboard -n traefik
     ```
+    <img src="images/image-68.png" alt="drawing" width="1100"/>
+
+- Then open a browser and navigate to [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). Inspect the certificate and confirm it's valid.
+
+    <img src="images/image-69.png" alt="drawing" width="900"/>
