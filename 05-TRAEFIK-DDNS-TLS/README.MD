@@ -18,6 +18,7 @@ YouTube Videos:
 
 
 ## File's replacement summary
+
 - renew_ip_cloudflare.sh
     - Replace all the authentication parameters 
 
@@ -105,7 +106,7 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 
 ## Create a DNS record in Cloudflare for your Trafik Server
 
-- Back in CloudFlare, create a DNS record to point to a fase public IP address. We'll update that later.
+- Back in CloudFlare, create a DNS record to point to a false public IP address. We'll update that later.
 
     > Note: 
     >

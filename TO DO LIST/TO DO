@@ -1,14 +1,5 @@
 Tasks:
-
-- Create more services as NGINX or Teleport and direct the application via Traefik reserve proxy. https://www.youtube.com/watch?v=6_wRqKmx7QU&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=2
-- Network -> Proxy. This should communicate to the other pods, without exposing it to the internet.
+- Create Teleport deployment and Traefik ingress route. https://www.youtube.com/watch?v=6_wRqKmx7QU&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=2
 - insecureSkipVerify: true (Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX)
-
-- What happens it MetalLB assigns another IP address?
+- What happens it MetalLB assigns another IP address? Should I create an IP pool with only one IP and dedicate it to Traefik?
 - Prometheus / Grafana set up
-
-
-Video steps pending:
-https://github.com/BuildAndDestroy/container_toolkit/blob/master/docker-registry/full_deployment.yaml
-[NO] I need to deploy the self signed as well / remove it?
-[NO] Deploy docker-registry-full-deployment.yaml?

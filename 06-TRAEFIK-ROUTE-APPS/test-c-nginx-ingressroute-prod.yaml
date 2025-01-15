@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy-main
+  namespace: test-web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: nginx-main
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: test-web
+spec:
+  entryPoints:
+    #- web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`nginx.<your_domain>`)
+      services:
+        #- kind: TraefikService
+        - name: nginx-deploy-main
+          port: 80
+  #TLS certificate
+  tls:
+    secretName: nginx-test-cluster-cert-prod-tls
+    domains:
+      - main: "nginx.<your_domain>"
+        sans:
+          - "*.nginx.<your_domain>"

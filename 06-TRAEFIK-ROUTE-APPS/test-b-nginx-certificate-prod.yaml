@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nginx-test-cluster-cert-prod
+  # The namespace the Certificate should be created in the same place as the IngressRoute
+  namespace: test-web
+spec:
+  secretName: nginx-test-cluster-cert-prod-tls
+  issuerRef:
+    # This is the ClusterIssuer resource that we created before
+    name: dns-challenge-acme-prod
+    kind: ClusterIssuer
+  # Relace your domain name here
+  commonName: "nginx.<your_domain>"
+  dnsNames:
+  # Relace your domain name here
+  - "nginx.<your_domain>"
