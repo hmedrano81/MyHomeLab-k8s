@@ -78,7 +78,7 @@ YouTube Videos:
 
 - Download the values file to configure the helm chart.
     ```sh
-    cd ~/Documents/MyHomelab-k8s/04-TRAEFIK-LETS-ENCRYPT/
+    cd ~/Documents/MyHomelab-k8s/06-TRAEFIK-LETS-ENCRYPT/
     helm show values traefik/traefik > 02-traefik-values-with-lets-encrypt.yaml
     ``` 
 

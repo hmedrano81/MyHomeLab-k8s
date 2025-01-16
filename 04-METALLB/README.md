@@ -88,7 +88,7 @@ If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to 
 
 - Download the values file to configure the helm chart.
     ```sh
-    cd ~/Documents/MyHomelab-k8s/02-METALLB/
+    cd ~/Documents/MyHomelab-k8s/04-METALLB/
     helm show values metallb/metallb > 02-metallb-values.yaml
     ```
 

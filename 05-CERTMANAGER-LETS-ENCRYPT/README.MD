@@ -38,7 +38,7 @@ Port	        | Protocol	| Component                 |Purpose
 
 - Download the values file to configure the helm chart.
     ```sh
-    cd ~/Documents/MyHomelab-k8s/03-CERTMANAGER-LETS-ENCRYPT/
+    cd ~/Documents/MyHomelab-k8s/05-CERTMANAGER-LETS-ENCRYPT/
     helm show values jetstack/cert-manager > 01-cert-manager-values.yaml
     ``` 
 

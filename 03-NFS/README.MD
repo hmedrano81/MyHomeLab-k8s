@@ -136,7 +136,7 @@ All worker nodes of our kubernetes cluster need the nfs package installed, other
 - Download the values file to configure the helm chart.
 
     ```sh
-    cd ~/Documents/MyHomelab-k8s/01-NFS/
+    cd ~/Documents/MyHomelab-k8s/03-NFS/
     helm show values nfs-provisioner/nfs-subdir-external-provisioner > 01-nfs-prov-values.yaml
     ```
 

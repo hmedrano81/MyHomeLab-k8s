@@ -3,3 +3,9 @@ Tasks:
 - insecureSkipVerify: true (Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX)
 - What happens it MetalLB assigns another IP address? Should I create an IP pool with only one IP and dedicate it to Traefik?
 - Prometheus / Grafana set up
+
+- Move instructions to set up each VM for the cluster: ""
+- Insert drawio to 00-CLUSTER \README.md file: ""
+- Sanatise the images: ""
+- Configure SSH sessions with Ubikey, so SSH keys are protected. Or use 1Password instead of local keys: ""
+- Enable metrics: https://github.com/kubernetes-sigs/metrics-server
