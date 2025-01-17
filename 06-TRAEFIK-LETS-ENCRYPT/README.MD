@@ -28,14 +28,15 @@ YouTube Videos:
 
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
-- A NFS server with a NFS provisioner chart installed and working.
+- A persistent volume
+- A Certificate Manager
 - `kubectl` command-line tool configured to interact with your cluster
 - `helm` command-line tool installed on your local machine version 3.9+
 
 
 ## Download the Traefik Helm Repository, modify the configuration and deploy it
 
-- Create a new namespace called traefik, using this file [00-traefik-namespace.yaml](00-traefik-namespace.yaml).
+- Create a new namespace called `traefik`, using this file [00-traefik-namespace.yaml](00-traefik-namespace.yaml).
 
     ```sh
     kubectl apply -f 00-traefik-namespace.yaml

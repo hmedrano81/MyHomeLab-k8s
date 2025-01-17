@@ -1,6 +1,6 @@
 # Deploying a Certificate Manager in Kubernetes
 
-Official Documentation: [Installing cert-managern](https://cert-manager.io/docs/installation/helm/
+Official Documentation: [Installing cert-managern](https://cert-manager.io/docs/installation/helm/)
 
 YouTube Videos: 
 

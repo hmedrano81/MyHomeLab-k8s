@@ -1,17 +1,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: nginx-test-cluster-cert-prod
+  name: teleport-cluster-cert-prod
   # The namespace the Certificate should be created in the same place as the IngressRoute
-  namespace: test-web
+  namespace: teleport
 spec:
-  secretName: nginx-test-cluster-cert-prod-tls
+  secretName: teleport-cluster-cert-prod-tls
   issuerRef:
     # This is the ClusterIssuer resource that we created before
     name: dns-challenge-acme-prod
     kind: ClusterIssuer
   # Relace your domain name here
-  commonName: "nginx.<your_domain>"
+  commonName: "teleport.med2engineering.dev"
   dnsNames:
   # Relace your domain name here
-  - "nginx.<your_domain>"
+  - "teleport.med2engineering.dev"

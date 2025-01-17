@@ -26,35 +26,16 @@ Documentation:
     kubectl apply -f test-a-nginx-deployment.yaml
     ```
 
-- Create a new **Production**  certificate, using the Cluster Issuer previously created `dns-challenge-acme-prod`. Use this file [test-b-nginx-certificate-prod.yaml](test-b-nginx-certificate-prod.yaml), which will create a secret named `nginx-test-cluster-cert-prod-tls`.
-
-    > ⚠️ **Warning**: 
-    >
-    > - You should replace this domain with your own.
-    >
-    > - The namespace the Certificate should be created in the same place as the IngressRoute
-
-    ```sh
-    kubectl apply -f test-b-nginx-certificate-prod.yaml
-
-    watch kubectl describe certificates nginx-test-cluster-cert-prod -n test-web
-
-    kubectl get secret nginx-test-cluster-cert-prod-tls -n test-web -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
-    ```
-
-    <img src="images/image-02.png" alt="drawing" width="900"/>
-
-- Create a Service and Ingress Route using this file [test-c-nginx-ingressroute-prod.yaml](test-c-nginx-ingressroute-prod.yaml). 
+- Create a Service and Ingress Route using this file [test-b-nginx-ingressroute-prod.yaml](test-b-nginx-ingressroute-prod.yaml). 
 
     The service `nginx-deploy-main` won't have an external ip assigned. 
     
-    The Ingress Route will use the secretName `nginx-test-cluster-cert-prod-tls`.
-
-    > Note:
-    >
-    > The namespace the Certificate should be created in the same place as the IngressRoute
+    The Ingress Route will use the same wildcard TLS secretName `mydomain-wildcard-cluster-cert-prod-tls`.
 
     ```sh
+    code test-c-nginx-ingressroute.yaml
+    # Replace the domain with your own.
+    
     kubectl apply -f test-c-nginx-ingressroute.yaml
     ```
 
@@ -68,8 +49,7 @@ Documentation:
 - You can delete the test objects
 
     ```sh
-    kubectl delete -f test-c-nginx-ingressroute-prod.yaml 
-    kubectl delete -f test-b-nginx-certificate-prod.yaml 
+    kubectl delete -f test-b-nginx-ingressroute-prod.yaml 
     kubectl delete -f test-a-nginx-deployment.yaml 
     kubectl delete ns test-web 
     ```

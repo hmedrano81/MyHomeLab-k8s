@@ -71,7 +71,7 @@ Set up the following virtual machines. Use a proxmox template. Enable SSH, add t
 - Two working nodes: 
     - 4 GB or Memory
     - 2 vCPU 
-    - 16 GB of Storage
+    - 32 GB of Storage
 - One load balancer
     - 2 GB or Memory
     - 2 vCPU 

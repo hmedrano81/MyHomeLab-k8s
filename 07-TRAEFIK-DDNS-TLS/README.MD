@@ -47,6 +47,7 @@ YouTube Videos:
 ## Prerequisites
 - A running Kubernetes cluster 1.2++
 - A NFS server with a NFS provisioner chart installed and working.
+- A registered domain name
 - `kubectl` command-line tool configured to interact with your cluster
 - `helm` command-line tool installed on your local machine version 3.9+
 
@@ -250,10 +251,15 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     > You should replace this domain with your own.
 
     ```sh
+    code test-traefik-certificate-DNS-staging.yaml
+    # Replace the email address and domain with your own.
+
     kubectl apply -f test-traefik-certificate-DNS-staging.yaml
     ```
 
-- Then confirm the events on the certificate recently created, to confirm this was successfull. The produce a valit certificate by Let's Encrypt may take a few minutes.
+- Then confirm the events on the certificate recently created, to confirm this was successfull. 
+
+    > Note: To produce a valid certificate, by Let's Encrypt may take a **few minutes**.
 
     ```sh
     watch kubectl describe certificates mydomain-wildcard-cluster-cert-staging -n traefik
@@ -271,6 +277,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     ```sh
     kubectl delete -f test-traefik-certificate-DNS-staging.yaml
+    kubectl delete secret mydomain-wildcard-cluster-cert-staging-tls -n traefik
     ```
 
 - Create a new **Production** certificate using this file [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml).

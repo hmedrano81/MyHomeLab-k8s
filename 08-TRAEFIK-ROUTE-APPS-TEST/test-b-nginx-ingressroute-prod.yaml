@@ -30,13 +30,8 @@ spec:
     - kind: Rule
       match: Host(`nginx.<your_domain>`)
       services:
-        #- kind: TraefikService
         - name: nginx-deploy-main
           port: 80
-  #TLS certificate
+  # Using wildcard TLS certificate
   tls:
-    secretName: nginx-test-cluster-cert-prod-tls
-    domains:
-      - main: "nginx.<your_domain>"
-        sans:
-          - "*.nginx.<your_domain>"
+    secretName: mydomain-wildcard-cluster-cert-prod-tls

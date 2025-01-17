@@ -6,6 +6,7 @@ Tasks:
 
 - Move instructions to set up each VM for the cluster: ""
 - Insert drawio to 00-CLUSTER \README.md file: ""
-- Sanatise the images: ""
 - Configure SSH sessions with Ubikey, so SSH keys are protected. Or use 1Password instead of local keys: ""
 - Enable metrics: https://github.com/kubernetes-sigs/metrics-server
+
+- Enable the Logs on my Router
