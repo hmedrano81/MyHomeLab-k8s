@@ -20,10 +20,7 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
     - Replace `<your_email>`
     - Replace `<your_domain>`
 
-- [02-teleport-certificate-prod.yaml](02-teleport-certificate-prod.yaml)
-    - Replace `<your_domain>`
-
-- [03-teleport-ingressroute-prod.yaml](03-teleport-ingressroute-prod.yaml)
+- [02-teleport-ingressroute-prod.yaml](02-teleport-ingressroute-prod.yaml)
     - Replace `<your_domain>`
 
 
@@ -67,15 +64,64 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
     helm show values teleport/teleport-cluster > 01-teleport-values.yaml
     ``` 
 
+
+
+
+
+
+
+
+
+> TBA:
+
+If you want to use Traefik, first you'll need to remove proxy_listener_mode: multiplex from your configuration to disable TLS multiplexing (as this will break everything when you're not terminating TLS at Teleport itself).
+
+Then, get Traefik to forward traffic to your Teleport container on port 444 (i.e. whatever your have configured for web_listen_addr)
+
+You probably don't need to provide certs to Teleport - it will generate a self-signed cert for the backend connection if you don't provide one via https_keypairs. You'll need to disable TLS verification for Traefik's backend connection to Teleport in this case.
+
+
+
+
+
 - Then open this file in a editor, and modify the following entries in the configuration.
 
     - `clusterName: "teleport.<your_domain>"`
 
-    - `proxyListenerMode: "multiplex"`
+    - `highAvailability.certManager.enabled: false`
 
-    - `acme: true`
+    - kubeClusterName: "k8cp.domain.com" ?????
 
-    - `acmeEmail: <your_email>`
+    To use an ingress, set proxyListenerMode=multiplex, ingress.enabled=true and service.type=ClusterIP
+    https://github.com/gravitational/teleport/discussions/29301
+
+    - `proxyListenerMode: "multiplex"`   ???????????
+
+    - `ingress.enabled=true`
+
+    - `service.type: ClusterIP` ????????????
+
+    - [Default] `acme: false`
+
+    - [Default] `acmeEmail: ""`
+
+others [Link](https://weisser-zwerg.dev/posts/security-identity-goteleport/#teleport-private-network-deployment)
+
+    - `proxy.proxy_service.public_addr: "teleport.<your_domain>"`
+
+    - `proxy.proxy_service.enabled: true`
+
+    - log.level: DEBUG
+
+
+
+auth_service:
+  cluster_name: teleport-host-behind-my-router.duckdns.org  ????????????
+  clusterName instead!!!
+  ...
+
+
+
 
     <img src="images/image-13.png" alt="drawing" width="900"/>
 
@@ -103,25 +149,8 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
 
     <img src="images/image-01.png" alt="drawing" width="1100"/>
 
-- Create a new **Production**  certificate, using the Cluster Issuer previously created `dns-challenge-acme-prod`. Use this file [02-teleport-certificate-prod.yaml](02-teleport-certificate-prod.yaml), which will create a secret named `nginx-test-cluster-cert-prod-tls`.
 
-    > ⚠️ **Warning**: 
-    >
-    > - You should replace this domain with your own.
-    >
-    > - The namespace the Certificate should be created in the same place as the IngressRoute
-
-    ```sh
-    kubectl apply -f 02-teleport-certificate-prod.yaml
-
-    watch kubectl describe certificates teleport-cluster-cert-prod -n teleport
-
-    kubectl get secret teleport-cluster-cert-prod-tls -n teleport -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
-    ```
-    <img src="images/image-02.png" alt="drawing" width="1100"/>
-
-
-- Create an Ingress Route using this file [03-teleport-ingressroute-prod.yaml](03-teleport-ingressroute-prod.yaml). 
+- Create an Ingress Route using this file [02-teleport-ingressroute-prod.yaml](02-teleport-ingressroute-prod.yaml). 
     
     The Ingress Route will use the secretName `teleport-cluster-cert-prod-tls`.
 
@@ -130,7 +159,10 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
     > The namespace the Certificate should be created in the same place as the IngressRoute
 
     ```sh
-    kubectl apply -f 03-teleport-ingressroute-prod.yaml
+    code 02-teleport-ingressroute-prod.yaml
+    # Replace the domain name with your own.
+    
+    kubectl apply -f 02-teleport-ingressroute-prod.yaml
     ```
     <img src="images/image-03.png" alt="drawing" width="1200"/>
 
@@ -138,6 +170,9 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
 - Then open a browser and navigate to [https://teleport.<your_domain>/](https://teleport.<your_domain>/). Inspect the certificate and confirm it's valid.
 
     <img src="images/image-16.png" alt="drawing" width="900"/>
+
+
+
 
 
 

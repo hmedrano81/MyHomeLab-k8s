@@ -315,6 +315,13 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     <img src="images/image-67.png" alt="drawing" width="1100"/>
 
+    - `ports.web.websecure.proxyProtocol.insecure: true`
+
+    > Note: Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX or Teleport.
+
+    <img src="images/image-70.png" alt="drawing" width="1000"/>
+
+
 -  Upgrade the Traefik helm chart.
     ```sh
     helm upgrade traefik traefik/traefik --namespace traefik --values=05-traefik-values-DNS-Challange.yaml

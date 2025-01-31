@@ -104,7 +104,16 @@ proxy:
   #   teleport:
   #     cache:
   #       enabled: false
-  #   proxy_service:
+  proxy_service:
+    enabled: true
+    web_listen_addr: 0.0.0.0:3080
+    public_addr: teleport.med2engineering.dev:443
+    https_keypairs: []
+    https_keypairs_reload_interval: 0s
+    acme: 
+      enabled: yes
+      email: hmedrano81@gmail.com
+    
   #     https_keypairs:
   #       - key_file: /my-custom-mount/key.pem
   #         cert_file: /my-custom-mount/cert.pem
@@ -238,9 +247,9 @@ tunnelPublicAddr: []
 # Setting acme to 'true' enables the ACME protocol and will attempt to get a free TLS certificate from Let's Encrypt.
 # Setting acme to 'false' (the default) will cause Teleport to generate and use self-signed certificates for its web UI.
 # This section is mutually exclusive with the "tls" value below.
-acme: true
+acme: false
 # acmeEmail is the email address to provide during certificate registration (this is a Let's Encrypt requirement)
-acmeEmail: "hmedrano81@gmail.com"
+acmeEmail: ""
 # acmeEmail: "<your_email>"
 # acmeURI is the ACME server to use for getting certificates. The default is to use Let's Encrypt's production server.
 acmeURI: ""
@@ -586,7 +595,7 @@ log:
   # Available log levels are: DEBUG, INFO, WARNING, ERROR.
   # The default is INFO, which is recommended in production.
   # DEBUG is useful during first-time setup or to see more detailed logs for debugging.
-  level: INFO
+  level: DEBUG
   # Log output
   # Use a file path to log to disk: e.g. '/var/lib/teleport/teleport.log'
   # Other supported values: 'stdout', 'stderr' and 'syslog'
@@ -692,7 +701,8 @@ rbac:
 # You can override the proxy's backend service to any service type (other than "LoadBalancer") here if really needed.
 # To use an Ingress, set service.type=ClusterIP and ingress.enabled=true
 service:
-  type: LoadBalancer
+  #type: LoadBalancer
+  type: ClusterIP
   # Additional entries here will be added to the service spec.
   spec: {}
     # loadBalancerIP: "1.2.3.4"
@@ -703,7 +713,7 @@ service:
 # Using an Ingress also requires that you use the `tsh` client to connect to Kubernetes clusters and databases behind Teleport.
 # See https://goteleport.com/docs/architecture/tls-routing/#working-with-layer-7-load-balancers-or-reverse-proxies-preview for details.
 ingress:
-  enabled: false
+  enabled: true
   # useExisting indicates to the chart that you are managing your own ingress.
   # (or HTTPRoute, or any other LoadBalancing method that terminates TLS).
   # The chart will configure Teleport like it's running behind an ingress, but will not create the ingress resource.

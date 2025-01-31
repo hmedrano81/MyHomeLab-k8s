@@ -24,7 +24,6 @@ metadata:
   namespace: test-web
 spec:
   entryPoints:
-    #- web
     - websecure
   routes:
     - kind: Rule

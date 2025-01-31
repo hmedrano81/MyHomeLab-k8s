@@ -16,14 +16,15 @@ YouTube Videos:
 
 ## File's replacement summary
 - [01-traefik-cloudflare-credentials.yaml](01-traefik-cloudflare-credentials.yaml)
-    - Replace email address 
-    - Replace API Key 
+    - Replace `<your_cloudflare_email>`
+    - Replace `<your_cloudflare_api_key>`
 
 - [02-traefik-values-with-lets-encrypt.yaml](02-traefik-values-with-lets-encrypt.yaml)
-    - Replace email address 
+    - Replace `<your_email>`
+    - Replace `<your_domain>`
 
 - [03-traefik-dashboard-credentials.yaml](03-traefik-dashboard-credentials.yaml)
-    - Replace the Base64 encoded HTTP authentication credential 
+    - Replace `<your_Base64_encoded_http_authentication_credential>`
 
 
 ## Prerequisites

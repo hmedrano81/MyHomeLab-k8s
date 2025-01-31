@@ -1,0 +1,57 @@
+Deployments:
+------------
+
+- teleport-cluster-proxy
+  ports:
+  - containerPort: 3080
+    name: tls
+    protocol: TCP
+  - containerPort: 3000
+    name: diag
+    protocol: TCP
+
+- teleport-cluster-auth
+  ports:
+  - containerPort: 3000
+    name: diag
+    protocol: TCP
+  - containerPort: 3025
+    name: auth
+    protocol: TCP
+  - containerPort: 3026
+    name: kube
+    protocol: TCP
+
+
+Services:
+------------
+
+- teleport-cluster
+  ports:
+  - name: tls
+    port: 443
+    protocol: TCP
+    targetPort: 3080
+
+- teleport-cluster-auth
+  ports:
+  - name: auth
+    port: 3025
+    protocol: TCP
+    targetPort: 3025
+  - name: kube
+    port: 3026
+    protocol: TCP
+    targetPort: 3026
+
+IngressRoutes:
+---------------
+
+
+EntryPoints:
+---------------
+- web
+- websecure
+
+
+CHECK THE LOGS

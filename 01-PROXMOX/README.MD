@@ -1,13 +1,95 @@
-# Installing Proxmox 
+# Proxmox 
 
 These are just some notes I've collected. Not a full description on how to install Proxmox.
 
 YoutTube Videos:
-- [Don’t run Proxmox without these settings!](https://www.youtube.com/watch?v=VAJWUZ3sTSI)
 
 - [Let's Install Proxmox 8.0!: Linux ](https://www.youtube.com/watch?v=sZcOlW-DwrU)
 
+- [Don’t run Proxmox without these settings!](https://www.youtube.com/watch?v=VAJWUZ3sTSI)
+
 - [Windows 11 on Proxmox -- Virtualization made easy](https://www.youtube.com/watch?v=iq3F5wgn_CI)
+
+## Installing Proxmox
+
+### Install using a USB Flash Drive
+
+- Download the latest version of the Proxmox VE ISO Installer: [Proxmox: Downloads](https://www.proxmox.com/en/downloads).
+
+- Flash a USB drive using a software such as [Balena Etcher](https://etcher.balena.io/)
+
+- Connect the USB drive in the the machine/server, power it up and enter in the BIOS to make sure it will boot using the USB.
+
+- Select the option with Graphical interface
+
+    <img src="images/image-03.png" alt="drawing" width="600"/>
+
+- Adjust the fixed IP address and finish the set up.
+
+- Using your browser, open the IP assigned, followed by the port 8006 [https://<proxmox_ip_address>:8006](https://<proxmox_ip_address>:8006). 
+
+### Upgrade Proxmox
+
+- Find out the version of your Proxmox server
+
+    ```sh
+    pveversion -v
+    ```
+
+- Run these two commands. This will update all packages to the latest version of that major version. 
+    ```sh
+    run apt update
+    apt full-upgrade
+    ```
+
+### High availability set up with two nodes
+
+YouTube video: [ProxMox High Availability Cluster!](https://www.youtube.com/watch?v=08b9DDJ_yf4)
+
+- Edit the `nano /etc/hosts` and add the name of the other host, on each server.
+
+    <img src="images/image-04.png" alt="drawing" width="600"/>
+
+#### On your **First Proxmox node**:
+
+- Go to Datacenter -> Cluster -> Create Cluster.
+
+    <img src="images/image-05.png" alt="drawing" width="1100"/>
+
+- Enter a name for the new Cluster and the network card to communicate with the second node.
+
+    <img src="images/image-06.png" alt="drawing" width="1100"/>
+
+- Go to Datacenter -> Cluster -> Select the cluster created -> Join information.
+
+    <img src="images/image-07.png" alt="drawing" width="1100"/>
+
+- Copy the information shown.
+
+#### On your **Second Proxmox node**:
+
+- Go to Datacenter -> Cluster -> Join Cluster.
+
+    <img src="images/image-08.png" alt="drawing" width="1100"/>
+
+- Paste the Join Information, add the IP address of the first node and enter its password.
+
+    <img src="images/image-09.png" alt="drawing" width="1100"/>
+
+    <img src="images/image-10.png" alt="drawing" width="1100"/>
+
+- After a few seconds, the two nodes will be shown unther the Cluster.
+
+    <img src="images/image-11.png" alt="drawing" width="1100"/>
+
+#### Configuring a ZFS Volume
+
+- Make sure in both nodes its own storage has is configured and healthy.
+
+    <img src="images/image-12.png" alt="drawing" width="1100"/>
+
+    <img src="images/image-13.png" alt="drawing" width="1100"/>
+
 
 
 ## Settings for each VM

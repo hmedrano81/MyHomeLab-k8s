@@ -546,7 +546,7 @@ tracing:  # @schema additionalProperties: false
   # -- Service name used in selected backend. Default: traefik.
   serviceName:  # @schema type:[string, null]
   # -- Applies a list of shared key:value attributes on all spans.
-  globalAttributes: {}
+  resourceAttributes: {}
   # -- Defines the list of request headers to add as attributes. It applies to client and server kind spans.
   capturedRequestHeaders: []
   # -- Defines the list of response headers to add as attributes. It applies to client and server kind spans.
@@ -724,7 +724,7 @@ ports:
     proxyProtocol:
       # -- Enable the Proxy Protocol header parsing for the entry point
       trustedIPs: []
-      insecure: false
+      insecure: true
     # -- See [upstream documentation](https://doc.traefik.io/traefik/routing/entrypoints/#transport)
     transport:
       respondingTimeouts:

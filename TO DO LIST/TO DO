@@ -1,12 +1,19 @@
 Tasks:
-- Create Teleport deployment and Traefik ingress route. https://www.youtube.com/watch?v=6_wRqKmx7QU&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=2
-- insecureSkipVerify: true (Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX)
-- What happens it MetalLB assigns another IP address? Should I create an IP pool with only one IP and dedicate it to Traefik?
-- Prometheus / Grafana set up
+- Create Teleport deployment and Traefik ingress route. 
+  https://www.youtube.com/watch?v=6_wRqKmx7QU&list=PL34sAs7_26wNldKrBBY_uagluNKC9cCak&index=2
 
-- Move instructions to set up each VM for the cluster: ""
-- Insert drawio to 00-CLUSTER \README.md file: ""
-- Configure SSH sessions with Ubikey, so SSH keys are protected. Or use 1Password instead of local keys: ""
+- Clean up Routes in Traefik
+
+- What happens it MetalLB assigns another IP address? Should I create an IP pool with only one IP and dedicate it to Traefik?
+
+- Prometheus / Grafana set up
 - Enable metrics: https://github.com/kubernetes-sigs/metrics-server
 
+
+- Insert drawio to 01-CLUSTER \README.md file: ""
+
+- Configure SSH sessions with Ubikey, so SSH keys are protected. Or use 1Password instead of local keys: ""
 - Enable the Logs on my Router
+
+
+- Proxmox: Configure HA
