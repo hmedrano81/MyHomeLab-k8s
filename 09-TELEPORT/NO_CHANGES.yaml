@@ -13,8 +13,7 @@
 #
 # Warning: The clusterName cannot be changed during a Teleport cluster's lifespan.
 # If you need to change it, you must redeploy a completely new cluster.
-clusterName: "teleport.med2engineering.dev"
-#clusterName: "teleport.<your-domain>"
+clusterName: ""
 
 # Name for this kubernetes cluster to be used by teleport users.
 kubeClusterName: ""
@@ -104,16 +103,7 @@ proxy:
   #   teleport:
   #     cache:
   #       enabled: false
-  proxy_service:
-    enabled: true
-    web_listen_addr: 0.0.0.0:3080
-    public_addr: teleport.med2engineering.dev:443
-    #https_keypairs: []
-    #https_keypairs_reload_interval: 0s
-    #acme: 
-    #  enabled: yes
-    #  email: hmedrano81@gmail.com
-    
+  #   proxy_service:
   #     https_keypairs:
   #       - key_file: /my-custom-mount/key.pem
   #         cert_file: /my-custom-mount/cert.pem
@@ -188,7 +178,7 @@ authentication:
 # To use an ingress, set proxyListenerMode=multiplex, ingress.enabled=true and service.type=ClusterIP
 #
 # Possible values are 'separate' and 'multiplex'
-proxyListenerMode: "multiplex"
+proxyListenerMode: "separate"
 
 # Optional setting for configuring session recording.
 # See `session_recording` under https://goteleport.com/docs/reference/config/#auth-service
@@ -594,7 +584,7 @@ log:
   # Available log levels are: DEBUG, INFO, WARNING, ERROR.
   # The default is INFO, which is recommended in production.
   # DEBUG is useful during first-time setup or to see more detailed logs for debugging.
-  level: DEBUG
+  level: INFO
   # Log output
   # Use a file path to log to disk: e.g. '/var/lib/teleport/teleport.log'
   # Other supported values: 'stdout', 'stderr' and 'syslog'
@@ -700,8 +690,7 @@ rbac:
 # You can override the proxy's backend service to any service type (other than "LoadBalancer") here if really needed.
 # To use an Ingress, set service.type=ClusterIP and ingress.enabled=true
 service:
-  #type: LoadBalancer
-  type: ClusterIP
+  type: LoadBalancer
   # Additional entries here will be added to the service spec.
   spec: {}
     # loadBalancerIP: "1.2.3.4"
@@ -712,20 +701,18 @@ service:
 # Using an Ingress also requires that you use the `tsh` client to connect to Kubernetes clusters and databases behind Teleport.
 # See https://goteleport.com/docs/architecture/tls-routing/#working-with-layer-7-load-balancers-or-reverse-proxies-preview for details.
 ingress:
-  enabled: true
+  enabled: false
   # useExisting indicates to the chart that you are managing your own ingress.
   # (or HTTPRoute, or any other LoadBalancing method that terminates TLS).
   # The chart will configure Teleport like it's running behind an ingress, but will not create the ingress resource.
   # You are responsible for creating and managing the ingress.
-  useExisting: true
+  useExisting: false
   # Setting suppressAutomaticWildcards to true will not automatically add *.<clusterName> as a hostname served
   # by the Ingress. This may be desirable if you don't use Teleport Application Access.
   suppressAutomaticWildcards: false
   # Additional entries here will be added to the ingress spec.
-  #spec: {}
+  spec: {}
     # ingressClassName: nginx
-  spec:
-    ingressClassName: teleport-cluster-web
 
 # Extra arguments to pass to 'teleport start' for the main Teleport pod
 extraArgs: []

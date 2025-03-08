@@ -72,16 +72,7 @@ Official Documentation: [Deploy Teleport on Kubernetes](https://goteleport.com/d
 
 
 
-> TBA:
-
-If you want to use Traefik, first you'll need to remove proxy_listener_mode: multiplex from your configuration to disable TLS multiplexing (as this will break everything when you're not terminating TLS at Teleport itself).
-
-Then, get Traefik to forward traffic to your Teleport container on port 444 (i.e. whatever your have configured for web_listen_addr)
-
-You probably don't need to provide certs to Teleport - it will generate a self-signed cert for the backend connection if you don't provide one via https_keypairs. You'll need to disable TLS verification for Traefik's backend connection to Teleport in this case.
-
-
-
+> WORK IN PROGRESS:
 
 
 - Then open this file in a editor, and modify the following entries in the configuration.
@@ -90,8 +81,12 @@ You probably don't need to provide certs to Teleport - it will generate a self-s
 
     - `highAvailability.certManager.enabled: false`
 
-    - kubeClusterName: "k8cp.domain.com" ?????
 
+    [USE DEBUG]
+    - `log.level: DEBUG`
+
+
+    [TIP 1]
     To use an ingress, set proxyListenerMode=multiplex, ingress.enabled=true and service.type=ClusterIP
     https://github.com/gravitational/teleport/discussions/29301
 
@@ -99,31 +94,30 @@ You probably don't need to provide certs to Teleport - it will generate a self-s
 
     - `ingress.enabled=true`
 
-    - `service.type: ClusterIP` ????????????
+    - `service.type: ClusterIP`
 
-    - [Default] `acme: false`
-
-    - [Default] `acmeEmail: ""`
-
-others [Link](https://weisser-zwerg.dev/posts/security-identity-goteleport/#teleport-private-network-deployment)
-
-    - `proxy.proxy_service.public_addr: "teleport.<your_domain>"`
+    [TIP 2]
+    [Link](https://weisser-zwerg.dev/posts/security-identity-goteleport/#teleport-private-network-deployment)
 
     - `proxy.proxy_service.enabled: true`
 
-    - log.level: DEBUG
+    - `proxy.proxy_service.public_addr: "teleport.<your_domain>"`
 
 
 
-auth_service:
-  cluster_name: teleport-host-behind-my-router.duckdns.org  ????????????
-  clusterName instead!!!
-  ...
+If you want to use Traefik, first you'll need to remove proxy_listener_mode: multiplex from your configuration to disable TLS multiplexing (as this will break everything when you're not terminating TLS at Teleport itself).
+
+Then, get Traefik to forward traffic to your Teleport container on port 444 (i.e. whatever your have configured for web_listen_addr)
+
+You probably don't need to provide certs to Teleport - it will generate a self-signed cert for the backend connection if you don't provide one via https_keypairs. You'll need to disable TLS verification for Traefik's backend connection to Teleport in this case.
+
+
+    [ingressroute] ????????
 
 
 
 
-    <img src="images/image-13.png" alt="drawing" width="900"/>
+
 
 
 - Deploy the Traefik helm chart, using this file [01-teleport-values.yaml](01-teleport-values.yaml).
@@ -131,6 +125,8 @@ auth_service:
     ```sh
     helm install teleport-cluster teleport/teleport-cluster --create-namespace --values 01-teleport-values.yaml
     watch kubectl get all -n teleport
+    kubectl logs deployment/traefik -n traefik -f
+    kubectl logs svc/teleport-cluster -n teleport -f
     ```
 
     <img src="images/image-14.png" alt="drawing" width="900"/>
@@ -156,7 +152,7 @@ auth_service:
 
     > Note:
     >
-    > The namespace the Certificate should be created in the same place as the IngressRoute
+    > The IngressRoute will use the same TLS certificate stored in Traefik. The certificate's namespace should be created in the same place as the IngressRoute.
 
     ```sh
     code 02-teleport-ingressroute-prod.yaml

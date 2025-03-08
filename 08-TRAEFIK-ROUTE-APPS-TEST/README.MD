@@ -20,6 +20,12 @@ Documentation:
 
     <img src="images/image-01.png" alt="drawing" width="1100"/>
 
+- Create a namespace called test-web
+    ```sh
+    kubectl create ns test-web
+    kubectl get ns
+    ```
+
 - Create a new deployment using this template [test-a-nginx-deployment.yaml](test-a-nginx-deployment.yaml)
 
     ```sh
@@ -28,15 +34,17 @@ Documentation:
 
 - Create a Service and Ingress Route using this file [test-b-nginx-ingressroute-prod.yaml](test-b-nginx-ingressroute-prod.yaml). 
 
-    The service `nginx-deploy-main` won't have an external ip assigned. 
-    
-    The Ingress Route will use the same wildcard TLS secretName `mydomain-wildcard-cluster-cert-prod-tls`.
+    > Note:
+    >
+    > The service `nginx-deploy-main` won't have an external ip assigned. 
+    >
+    > The IngressRoute will use the same TLS certificate stored in Traefik. The certificate's namespace should be created in the same place as the IngressRoute.
 
     ```sh
-    code test-c-nginx-ingressroute.yaml
+    code test-b-nginx-ingressroute-prod.yaml
     # Replace the domain with your own.
     
-    kubectl apply -f test-c-nginx-ingressroute.yaml
+    kubectl apply -f test-b-nginx-ingressroute-prod.yaml
     ```
 
     <img src="images/image-03.png" alt="drawing" width="1100"/>

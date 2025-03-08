@@ -1,12 +1,19 @@
 # Proxmox 
 
-These are just some notes I've collected. Not a full description on how to install Proxmox.
+> Note: 
+>
+> These are just some notes I've collected. Not a full description on how to install Proxmox.
+
+Offical documentation:
+- [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability)
 
 YoutTube Videos:
 
 - [Let's Install Proxmox 8.0!: Linux ](https://www.youtube.com/watch?v=sZcOlW-DwrU)
 
 - [Don’t run Proxmox without these settings!](https://www.youtube.com/watch?v=VAJWUZ3sTSI)
+
+- [ProxMox High Availability Cluster!](https://www.youtube.com/watch?v=08b9DDJ_yf4)
 
 - [Windows 11 on Proxmox -- Virtualization made easy](https://www.youtube.com/watch?v=iq3F5wgn_CI)
 
@@ -28,7 +35,25 @@ YoutTube Videos:
 
 - Using your browser, open the IP assigned, followed by the port 8006 [https://<proxmox_ip_address>:8006](https://<proxmox_ip_address>:8006). 
 
+
 ### Upgrade Proxmox
+
+- Disable the Enterprise Repository. 
+
+    ```sh
+    vi /etc/apt/sources.list.d/pve-enterprise.list
+    # Comment this line
+    # deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
+
+    vi /etc/apt/sources.list.d/ceph.list
+    # Comment this line
+    # deb https://enterprise.proxmox.com/debian/ceph-quincy bookworm enterprise
+    ```
+
+- Enable the No-Subscription Repository
+    ```sh
+    echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" | tee /etc/apt/sources.list.d/pve-no-subscription.list
+    ```
 
 - Find out the version of your Proxmox server
 
@@ -38,7 +63,7 @@ YoutTube Videos:
 
 - Run these two commands. This will update all packages to the latest version of that major version. 
     ```sh
-    run apt update
+    apt update
     apt full-upgrade
     ```
 
@@ -84,11 +109,46 @@ YouTube video: [ProxMox High Availability Cluster!](https://www.youtube.com/watc
 
 #### Configuring a ZFS Volume
 
-- Make sure in both nodes its own storage has is configured and healthy.
+> Note: We are going to configure a CFS mirror to enable high availability in the cluster.
+>
+> The ZFS pools must have identical names. Otherwise, if a VM is migrated to a new node it won't know what path it needs to follow to access its virtual disk
+
+- Make sure in both nodes its own storage has is configured and healthy. Go to Datacenter -> `<Proxmox_first_node>` -> Disks.
 
     <img src="images/image-12.png" alt="drawing" width="1100"/>
 
     <img src="images/image-13.png" alt="drawing" width="1100"/>
+
+- Go to Datacenter -> `<Proxmox_first_node>` -> Disks -> ZFS -> Create ZFS.
+
+    <img src="images/image-14.png" alt="drawing" width="1100"/>
+
+    - `Name: HL-Storage`
+    - `RAID Level: Mirror`
+    - Make sure the `Add Storage` checkbox is selectec.
+    - Select the disks you'd like to add.
+
+
+WORK IN PROGRESS
+
+
+HIGH AVAILABILITY REQUIRES THREE NODES
+
+...
+
+...
+
+...
+
+...
+
+...
+
+...
+
+...
+
+
 
 
 

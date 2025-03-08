@@ -1,17 +1,18 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: traefik-teleport-cluster-web
+  name: teleport-cluster-web
   namespace: teleport
 spec:
   entryPoints:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`teleport.med2engineering.dev`,`*.teleport.med2engineering.dev`)
+      #match: Host(`teleport.med2engineering.dev`,`*.teleport.med2engineering.dev`)
+      match: Host(`teleport.med2engineering.dev`)
       services:
         - name: teleport-cluster
           port: 443
   # Using wildcard TLS certificate
-  tls:
-    secretName: mydomain-wildcard-cluster-cert-prod-tls
+  #tls:
+  #  secretName: mydomain-wildcard-cluster-cert-prod-tls
