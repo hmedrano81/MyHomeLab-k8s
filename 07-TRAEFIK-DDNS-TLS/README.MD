@@ -246,7 +246,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 - Confirm the Cluster Issuer was created successfully.
     ```sh
     kubectl get pods -A | grep cert-manager
-    kubectl logs cert-manager-<tab> -n cert-manager --tail 100 -f
+    kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
     ```
      <img src="images/image-62.png" alt="drawing" width="1100"/>
 
@@ -262,7 +262,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     kubectl get secrets -n cert-manager
 
     kubectl get pods -A | grep cert-manager
-    kubectl logs cert-manager-<tab> -n cert-manager --tail 100 -f
+    kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
     ```
 
 - Create a new **Staging*** certificate using this file [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml).
@@ -286,6 +286,15 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     watch kubectl describe certificates mydomain-wildcard-cluster-cert-staging -n traefik
     ```
     <img src="images/image-63.png" alt="drawing" width="1100"/>
+
+
+    > ⚠️ **Warning**: 
+    >
+    > Some times is required do access Cloudflare DNS records, and modify the content of the DNS challange, adding quotation marks on it.
+
+    <img src="images/image-75.png" alt="drawing" width="1100"/>
+
+
 
 - You can also inspect the certificate produced
 
@@ -320,7 +329,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
 ## Update the Traefik deployment with a valid TLS certificate
 
-- Make a copy of the Traefik Values file, or use this file [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml), and modify the following entries in the configuration.
+- Make a copy of the Traefik Values file [02-traefik-values-with-lets-encrypt.yaml](../06-TRAEFIK-LETS-ENCRYPT/02-traefik-values-with-lets-encrypt.yaml), or use this file [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml), and modify the following entries in the configuration.
 
     > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
 
@@ -352,7 +361,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     ```sh
     kubectl describe ingressroute traefik-dashboard -n traefik
     ```
-    <img src="images/image-68.png" alt="drawing" width="1100"/>
+    <img src="images/image-68.png" alt="drawing" width="900"/>
 
 - Then open a browser and navigate to [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). Inspect the certificate and confirm it's valid.
 
