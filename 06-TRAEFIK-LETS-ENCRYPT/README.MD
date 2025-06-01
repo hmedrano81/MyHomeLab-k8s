@@ -138,7 +138,7 @@ YouTube Videos:
 
         `ingressRoute.dashboard.entryPoints: ["websecure"]`
 
-        `ingressRoute.dashboard.matchRule: Host(`traefik.example.com`)
+        `ingressRoute.dashboard.matchRule: Host(`traefik.local.com`)
 
         > Note: We'll enable the Dashboard for now to troubleshoot the rest of the deployment. 
         >
@@ -188,7 +188,7 @@ YouTube Videos:
     ```
     <img src="images/image-27.png" alt="drawing" width="750"/>
 
-- Then open a browser and navigate to [https://traefik.example.com/](https://traefik.example.com/). You should be able to open the Traefik Dashboard.
+- Then open a browser and navigate to [https://traefik.local.com/](https://traefik.local.com/). You should be able to open the Traefik Dashboard.
 
     <img src="images/image-28.png" alt="drawing" width="1100"/>
 
@@ -208,7 +208,7 @@ YouTube Videos:
 - Generate a Base64-encoded HTTP Basic Authentication credential pair for a username and password specified.
     ```sh
     htpasswd -nb <your_username> <your_password> | base64
-    ``
+    ```
 
 - Create the Traefik Dashboard credentials and Middleware using this file [03-traefik-dashboard-credentials.yaml](03-traefik-dashboard-credentials.yaml)
 
@@ -244,7 +244,7 @@ YouTube Videos:
     ```
     <img src="images/image-31.png" alt="drawing" width="1100"/>
 
-- Then open a browser and navigate to [https://traefik.example.com/](https://traefik.example.com/). You should be prompted to enter a username and passsword.
+- Then open a browser and navigate to [https://traefik.local.com/](https://traefik.local.com/). You should be prompted to enter a username and passsword.
 
     <img src="images/image-32.png" alt="drawing" width="1100"/>
 

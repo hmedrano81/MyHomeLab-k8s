@@ -193,7 +193,7 @@ ingressRoute:
     labels: {}
     # -- The router match rule used for the dashboard ingressRoute
     #matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
-    matchRule: Host(`traefik.example.com`)
+    matchRule: Host(`traefik.local.com`)
     # -- The internal service used for the dashboard ingressRoute
     services:
       - name: api@internal
