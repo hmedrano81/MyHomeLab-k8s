@@ -59,9 +59,9 @@ Let's Encrypt has two ways to complete a challange: TLS challenge (ports forward
 In a DNS challange what Let's Encrypt does is login to CloudFlare with your credentials (Email and API Key), and create a temporary record. then, when Let's Encrypt find the record in the domain, it confirms you own the domain. This verifies your identify and provides a valid certificate.
 
 
-## Set up a Dynamic DNS records for your domain (i.e. NameCheap) in a Cloudflare account
+## Set up a Dynamic DNS records for your domain (i.e. NameCheap or Google Domains) in a Cloudflare account
 
-- Login to your CloudFlare account [Cloudflare Dashboard](https://dash.cloudflare.com/login), and select **Add a domain**. Depending on your site setup, you may want to adjust the proxy status for certain A, AAAA, or CNAME records.
+- Login to your CloudFlare Dashboard [https://dash.cloudflare.com/login](https://dash.cloudflare.com/login), and select **Add a domain**. Depending on your site setup, you may want to adjust the proxy status for certain A, AAAA, or CNAME records.
 
     <img src="images/image-43.png" alt="drawing" width="1000"/>
 
@@ -70,6 +70,8 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 - Once you have added a domain (also known as a zone) to Cloudflare, that domain will receive two assigned authoritative nameservers. Before your domain can begin using Cloudflare for DNS resolution, you need to add these nameservers at your registrar.
 
     <img src="images/image-45.png" alt="drawing" width="1000"/>
+
+### Option 1: NameCheap
 
 - Login to your NameCheap account [NameCheap](https://ap.www.namecheap.com/), go to Dashboard and click on the link to **Manage** your domain. 
 
@@ -82,6 +84,25 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
     <img src="images/image-47.png" alt="drawing" width="1000"/>
 
 
+### Option 2: Google Domains
+
+- Login to your Google Domain account [Google Domains](https://console.cloud.google.com/net-services/domains/registrations/list), go to `Cloud domains` and click on the link to Manage your domain.
+
+    <img src="images/image-71.png" alt="drawing" width="1000"/>
+
+- Click on `Edit DNS details`.
+
+    <img src="images/image-72.png" alt="drawing" width="1000"/>
+
+- Disable DNSSEC and wait for a while (up to one day) to adjust your `Name Servers` settings.
+
+    <img src="images/image-73.png" alt="drawing" width="1000"/>
+
+- Adjust your `Name Servers` settings to point to the to Cloudflare nameservers, and disable DNSSEC.
+
+    <img src="images/image-74.png" alt="drawing" width="1000"/>
+
+
 ### Create API Key in Cloudflare
 
 - Create a Cloudflare API token for use in cert-manager. Create and verify the domain you want to create an SSL certificate. 
@@ -92,7 +113,7 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
     
         <img src="images/image-06.png" alt="drawing" width="1000"/>
 
-    - Click Create Token button selecting the "Edit Zone DNS" option.
+    - Click Create Token button selecting the `Edit Zone DNS` option.
 
         <img src="images/image-07.png" alt="drawing" width="700"/>
 
@@ -139,9 +160,9 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     - `auth_email` The email used to login to Cloudflare
     - `auth_method` Leave the default token value
-    - `auth_key` API Key set up previusly
+    - `auth_key` API Key set up previously
     - `zone_identifier` Value from the Overview page of the CloudFlare Dahsboard
-    - `record_name` Fully qualified name, i.e. homelab.<yourdomain>.dev
+    - `record_name` Fully qualified name, i.e. homelab-traefik.<yourdomain>
 
     <img src="images/image-51.png" alt="drawing" width="1000"/>
 
@@ -181,7 +202,7 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     <img src="images/image-57.png" alt="drawing" width="1000"/>
 
-- Try to access your Traefik dashboard. [https://homelab-traefik.<your_domain>.dev/](https://homelab-traefik.<your_domain>.dev/). This attemp won't be able to open the dashboard, as we need to set up the TLS certificate.
+- Try to access your Traefik dashboard. [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). This attemp won't be able to open the dashboard, as we need to set up the TLS certificate.
 
     <img src="images/image-58.png" alt="drawing" width="1000"/>
 
