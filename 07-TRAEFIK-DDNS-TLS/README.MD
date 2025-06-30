@@ -190,6 +190,8 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
 ## Allow HTTPS traffic to your Traefik Server
 
+### Asus Router
+
 - Login to your home router, and enable DMZ. Specify the local IP address (MetlaLB) assigned to your Traefik deployment.
 
     <img src="images/image-55.png" alt="drawing" width="1000"/>
@@ -202,7 +204,50 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     <img src="images/image-57.png" alt="drawing" width="1000"/>
 
-- Try to access your Traefik dashboard. [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). This attemp won't be able to open the dashboard, as we need to set up the TLS certificate.
+### OPNsense Router
+
+- Login to your OPNsense home router. Go to `Firewall > Settings > Advanced`:
+    - Reflection for port forwards: Leave it disabled
+    - Reflection for 1:1: Leave it disabled
+    - Automatic outbound NAT for Reflection: Enabled 
+
+    <img src="images/image-76.png" alt="drawing" width="1000"/>
+
+- Go to `Firewall > Aliases >` Add a new alias
+    - Name: "traefik"
+    - type: Host(s)
+    - Aliases: Input 192.168.1.200
+    - Description: "homelab traefik"
+
+    <img src="images/image-77.png" alt="drawing" width="1000"/>
+
+- Go to `Firewall > NAT > Port Forward`
+
+    - Interface: WAN
+    - TCP/IP Version: IPv4
+    - Protocol: TCP
+
+    - Source / Invert: Unchecked
+    - Source: Any
+    - Source port range: from: any to: any
+
+    - Destination / Invert: Unchecked
+    - Destination: WAN address
+    - Destination Port range: from: HTTPS to: HTTPS
+
+    - Redirect target IP: Alias "traefik"
+    - Redirect target Port: HTTPS
+
+    - Pool Options: Default
+    - NAT reflection: Enable
+    - Filter rule association: Rule Homelab Traefik
+
+    <img src="images/image-78.png" alt="drawing" width="1000"/>
+
+
+### Test
+
+- Try to access your Traefik dashboard. [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). This attempt won't be able to open the dashboard, as we need to set up the TLS certificate.
 
     <img src="images/image-58.png" alt="drawing" width="1000"/>
 
