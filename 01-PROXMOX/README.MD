@@ -38,6 +38,82 @@ YoutTube Videos:
 
 ### Upgrade Proxmox
 
+
+#### Versions 9.x
+
+- Find out the version of your Proxmox server
+
+    ```sh
+    pveversion -v
+    ```
+
+- Update Repository Sources. Change from Bookworm (PVE 8) to Trixie (PVE 9):
+
+    ```sh
+    nano /etc/apt/sources.list
+    # Old (comment out or remove):
+    # deb http://ftp.debian.org/debian bookworm main contrib
+    # deb http://ftp.debian.org/debian bookworm-updates main contrib
+    # deb http://security.debian.org/debian-security bookworm-security main contrib
+
+    # New:
+    deb http://ftp.debian.org/debian trixie main contrib
+    deb http://ftp.debian.org/debian trixie-updates main contrib  
+    deb http://security.debian.org/debian-security trixie-security main contrib
+    ```
+
+- Update Proxmox Repository. For no-subscription repository.
+
+    ```sh
+    nano /etc/apt/sources.list.d/pve-no-subscription.list
+
+    # New:
+    deb http://download.proxmox.com/debian/pve trixie pve-no-subscription
+    ```
+- Perform the Upgrade
+
+    ```sh
+    # Update package lists
+    apt update
+
+    # Check for held packages
+    apt-mark showhold
+
+    # Start the upgrade
+    apt dist-upgrade
+    ```
+
+- Handle Configuration Questions. During upgrade, you'll be prompted about configuration files. Generally:
+    - Keep your current configuration for network interfaces
+    - Accept new configurations for system files unless you have specific customizations
+
+- Reboot
+    ```sh
+    reboot
+    ```
+
+- Post-installation, verify Installation
+
+    ```sh
+    pveversion -v
+    cat /etc/debian_version  # Should show Trixie/Sid
+    ```
+
+- Check Services
+    ```sh
+    systemctl status pveproxy pvedaemon pve-cluster
+    ```
+
+- Update VM/CT Configurations. Some VMs might need configuration updates for new features or compatibility.
+
+- Clean Up
+    ```sh
+    apt autoremove
+    apt autoclean
+    ```
+
+#### Versionx 8.x
+
 - Disable the Enterprise Repository. 
 
     ```sh
