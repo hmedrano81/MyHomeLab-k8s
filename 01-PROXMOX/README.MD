@@ -1,23 +1,5 @@
 # Proxmox
 
-> Note:
->
-> These are just some notes I've collected. Not a full description on how to install Proxmox.
-
-Offical documentation:
-
-- [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability)
-
-YoutTube Videos:
-
-- [Let's Install Proxmox 8.0!: Linux ](https://www.youtube.com/watch?v=sZcOlW-DwrU)
-
-- [Don’t run Proxmox without these settings!](https://www.youtube.com/watch?v=VAJWUZ3sTSI)
-
-- [ProxMox High Availability Cluster!](https://www.youtube.com/watch?v=08b9DDJ_yf4)
-
-- [Windows 11 on Proxmox -- Virtualization made easy](https://www.youtube.com/watch?v=iq3F5wgn_CI)
-
 ## Installing Proxmox
 
 ### Install using a USB Flash Drive
@@ -228,32 +210,30 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 
 ...
 
-## Settings for each VM
+## Ubuntu install (Virtual Machine)
+
+### Settings in Proxmox
 
 - OS:
 
-  - Guest OS type: Microsoft Windows (Required for Windows 11)
-  - Guest OS Version: 11/2022/2025 (Required for Windows 11)
-  - Add additional driver for VirtIO: Checked (Required for Windows 11)
-  - Select local storage and the virtio ISO (Required for Windows 11)
+  - Guest OS type: Linux
+  - Guest OS Version: 6.x - 2.6 Kernel
 
 - System:
 
+  - Graphic card: Default
   - Machine: q35 (UEFI)
   - BIOS: OVMF (UEFI)
-  - Add EFI Disk: (Not required for Windows 11)
-    § EFI Storage: local-lvm
-  - Add TPM: Checked. (Required for Windows 11)
+  - EFI Storage: local-lvm
 
 - Disks:
 
   - Bus/Device: SCSI
-  - Cache: Write back (Recommended for Windows 11)
-  - Enable Discard (Recommended for Windows 11)
-  - Enable IO thread (Recommended for Windows 11)
-  - SSD emulation (Recommended for Windows 11)
   - Storage: local-lvm
   - Disk size: 60 GiB (Thin prevision by default)
+  - Cache: Default (No chache)
+  - Discard: Disable (default)
+  - IO thread: Disable (default)
 
 - CPU:
 
@@ -264,44 +244,18 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 - Memory:
 
   - Memory: 16384 MiB
-  - Advanced -> Balloning Device: Uncheck (Not recommended , as it will allocate all the memory to the VM)
+  - Advanced -> Ballooning Device: Check
 
 - Network:
+
   - Bridge: vmbr0
-  - Mode: Intel E1000
+  - Model: Intel E1000
 
-## Windows install (Virtual Machine)
-
-Official Documentation:
-
-- [How to install Win11 in Proxmox | Quick guide | And fix problems of network search](https://forum.proxmox.com/threads/how-to-install-win11-in-proxmox-quick-guide-and-fix-problems-of-network-search.136596/)
-
-- [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.youtube.com/watch?v=srOty2jflF4)
-
-Download the ISO: - [x86](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso) - [ARM](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewarm64)
-
-Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
-
-### Windows Inside program
-
-- Install the Vmware tools / mount the drive
-
-- Upgrade the driver for the network adapter
-
-- Settings -> Windows insider program - > Link an account
-
-- Set-ExecutionPolicy RemoteSigned
-
-## Enable RDP on Windows 11 Hack
-
-[https://www.youtube.com/watch?v=QWeQk-8HwFo](How To Fix Rdp Not Working On Windows 11 Home)
-
-    > Note: [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso)
-
-## Ubuntu install (Virtual Machine)
+### Installing Ubuntu
 
 - Install Ubuntu Desktop 24.04 TLS and set IP address udring install
 - Enable SSH
+
   ```sh
   sudo apt update
   sudo apt install nala -y
@@ -317,6 +271,7 @@ Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/v
   # Then from your laptop
   ssh-copy-id -i homelab.pub hmedrano@192.168.86.7
   ```
+
 - Enable RDP Server
   ```sh
   sudo nala install xrdp -y
@@ -368,3 +323,108 @@ Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/v
   sudo unattended-upgrades --dry-run --debug
   sudo unattended-upgrades
   ```
+
+## Windows 11 install (Virtual Machine)
+
+### Settings in Proxmox
+
+- OS:
+
+  - Guest OS > Type: Microsoft Windows
+  - Guest OS > Version: 11/2022/2025
+  - Add additional driver for VirtIO: Checked
+    - Storage: local
+    - ISO image: virtio-win-0.1.240.iso or latest
+
+- System:
+
+  - Graphic card: Default
+  - Machine: q35
+  - BIOS: OVMF (UEFI)
+  - EFI Storage: local-lvm
+  - SCSI Controller: VirtIO SCSI single
+  - Add EFI Disk:
+  - Add TPM: Checked. (Required for Windows 11)
+
+- Disks:
+
+  - Bus/Device: SCSI
+  - Storage: local-lvm
+  - Disk size: 60 GiB (Thin prevision by default)
+  - Cache: Write back
+  - Discard: Enabled
+  - IO thread: Enabled
+  - SSD emulation: Enabled
+
+- CPU:
+
+  - Sockets: 1
+  - Cores: 8
+  - Types: x86-64-v2-AES (New default)
+
+- Memory:
+
+  - Memory: 16384 MiB
+  - Advanced -> Balloning Device: Uncheck (Not recommended , as it will allocate all the memory to the VM)
+
+- Network:
+  - Bridge: vmbr0
+  - Mode: Intel E1000
+
+### Installing Windows
+
+Official Documentation:
+
+- [How to install Win11 in Proxmox | Quick guide | And fix problems of network search](https://forum.proxmox.com/threads/how-to-install-win11-in-proxmox-quick-guide-and-fix-problems-of-network-search.136596/)
+
+- [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.youtube.com/watch?v=srOty2jflF4)
+
+Download the ISO: - [x86](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso) - [ARM](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewarm64)
+
+Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
+
+#### Windows Inside program
+
+- Install the Vmware tools / mount the drive
+
+- Upgrade the driver for the network adapter
+
+- Settings -> Windows insider program - > Link an account
+
+- Set-ExecutionPolicy RemoteSigned
+
+#### Enable RDP on Windows 11 Hack
+
+[https://www.youtube.com/watch?v=QWeQk-8HwFo](How To Fix Rdp Not Working On Windows 11 Home)
+
+    > Note: [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso)
+
+## Cheat sheet
+
+- List all VMs
+
+  `qm list`
+
+- List all LVM-based VM disks.
+
+  `lvs | grep vm-`
+
+## References:
+
+> Note:
+>
+> These are just some notes I've collected. Not a full description on how to install Proxmox.
+
+Offical documentation:
+
+- [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability)
+
+YoutTube Videos:
+
+- [Let's Install Proxmox 8.0!: Linux ](https://www.youtube.com/watch?v=sZcOlW-DwrU)
+
+- [Don’t run Proxmox without these settings!](https://www.youtube.com/watch?v=VAJWUZ3sTSI)
+
+- [ProxMox High Availability Cluster!](https://www.youtube.com/watch?v=08b9DDJ_yf4)
+
+- [Windows 11 on Proxmox -- Virtualization made easy](https://www.youtube.com/watch?v=iq3F5wgn_CI)

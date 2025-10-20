@@ -1,63 +1,66 @@
 # Allow HTTPS traffic to your Traefik deployment
 
-Documentation: 
+Documentation:
 
 - [Traefik: Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
 
 - [Cert Manager: DNS Validation](https://cert-manager.io/docs/tutorials/acme/dns-validation/)
 
 - [How to set up DNS records for your domain in a Cloudflare account](https://www.namecheap.com/support/knowledgebase/article.aspx/9607/2210/how-to-set-up-dns-records-for-your-domain-in-a-cloudflare-account/)
-    
 - [Cloudflare: Manage DNS records](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)
 
-YouTube Videos: 
+YouTube Videos:
 
 - [SSL Certificates Made EASY With Traefik Proxy, Clouflare, and Let's Encrypt - Tutorial](https://www.youtube.com/watch?v=XH9XgiVM_z4)
 
 - [DDNS on a Raspberry Pi using the Cloudflare API (Dynamic DNS)](https://youtu.be/rI-XxnyWFnM?si=wAw5iDKA4pNoabVZ)
 
-
 ## File's replacement summary
 
 - renew_ip_cloudflare.sh
-    - Replace all the authentication parameters 
+
+  - Replace all the authentication parameters
 
 - [01-cert-manager-cloudflare-credentials.yaml](01-cert-manager-cloudflare-credentials.yaml)
-    - Replace `<your_cloudflare_email>`
-    - Replace `<your_cloudflare_api_key>`
+
+  - Replace `<your_cloudflare_email>`
+  - Replace `<your_cloudflare_api_key>`
 
 - [02-cluster-issuer-DNS-Challenge-staging.yaml](02-cluster-issuer-DNS-Challenge-staging.yaml)
-    - Replace `<your_email>`
-    - Replace `<your_domain>`
+
+  - Replace `<your_email>`
+  - Replace `<your_domain>`
 
 - [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml)
-    - Replace `<your_domain>`
+
+  - Replace `<your_domain>`
 
 - [03-cluster-issuer-DNS-Challenge-prod.yaml](03-cluster-issuer-DNS-Challenge-prod.yaml)
-    - Replace `<your_email>`
-    - Replace `<your_domain>`
+
+  - Replace `<your_email>`
+  - Replace `<your_domain>`
 
 - [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml)
-    - Replace `<your_domain>`
+
+  - Replace `<your_domain>`
 
 - [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml)
-    - Replace `<your_email>`
-    - Replace `<your_domain>`
+  - Replace `<your_email>`
+  - Replace `<your_domain>`
 
 ## Prerequisites
+
 - A running Kubernetes cluster 1.2++
 - A NFS server with a NFS provisioner chart installed and working.
 - A registered domain name
 - `kubectl` command-line tool configured to interact with your cluster
 - `helm` command-line tool installed on your local machine version 3.9+
 
-
 ## Introduction
 
 Let's Encrypt has two ways to complete a challange: TLS challenge (ports forwarded required) or DNS challenge (you simply need API access to your DNS provider).
 
 In a DNS challange what Let's Encrypt does is login to CloudFlare with your credentials (Email and API Key), and create a temporary record. then, when Let's Encrypt find the record in the domain, it confirms you own the domain. This verifies your identify and provides a valid certificate.
-
 
 ## Set up a Dynamic DNS records for your domain (i.e. NameCheap or Google Domains) in a Cloudflare account
 
@@ -73,7 +76,7 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 
 ### Option 1: NameCheap
 
-- Login to your NameCheap account [NameCheap](https://ap.www.namecheap.com/), go to Dashboard and click on the link to **Manage** your domain. 
+- Login to your NameCheap account [NameCheap](https://ap.www.namecheap.com/), go to Dashboard and click on the link to **Manage** your domain.
 
 - Adjust your **NameServers** settings to point to the to Cloudflare nameservers.
 
@@ -82,7 +85,6 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 - Disable DNSSEC.
 
     <img src="images/image-47.png" alt="drawing" width="1000"/>
-
 
 ### Option 2: Google Domains
 
@@ -102,45 +104,56 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 
     <img src="images/image-74.png" alt="drawing" width="1000"/>
 
-
 ### Create API Key in Cloudflare
 
-- Create a Cloudflare API token for use in cert-manager. Create and verify the domain you want to create an SSL certificate. 
+- Create a Cloudflare API token for use in cert-manager. Create and verify the domain you want to create an SSL certificate.
 
-    Documentation: [Lego > DNS Providers > Cloudflare](https://go-acme.github.io/lego/dns/cloudflare/)
+  Documentation: [Lego > DNS Providers > Cloudflare](https://go-acme.github.io/lego/dns/cloudflare/)
 
-    - Go to [Cloudflare dashboard](https://dash.cloudflare.com/) > [My Profile](https://dash.cloudflare.com/profile) (Right top corner) > API Tokens. 
-    
-        <img src="images/image-06.png" alt="drawing" width="1000"/>
+  - Go to [Cloudflare dashboard](https://dash.cloudflare.com/) > [My Profile](https://dash.cloudflare.com/profile) (Right top corner) > API Tokens.
 
-    - Click Create Token button selecting the `Edit Zone DNS` option.
+      <img src="images/image-06.png" alt="drawing" width="1000"/>
 
-        <img src="images/image-07.png" alt="drawing" width="700"/>
+  - Click Create Token button selecting the `Edit Zone DNS` option.
 
-    - Then, fill Permission section form below.
+      <img src="images/image-07.png" alt="drawing" width="700"/>
 
-        <img src="images/image-08.png" alt="drawing" width="700"/>
+  - Then, fill Permission section form below.
 
-    - Take note of the API Token generated.
+      <img src="images/image-08.png" alt="drawing" width="700"/>
 
-        <img src="images/image-09.png" alt="drawing" width="700"/>
+  - Take note of the API Token generated.
 
+      <img src="images/image-09.png" alt="drawing" width="700"/>
+
+    - Optional, you can run this command to verify the API
+
+    ```
+    curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+        -H "Authorization: Bearer lV3aXAmL4MLHzHOVBwZjJcfp6qRjuh9eN3qhnGSx" \
+        -H "Content-Type:application/json"
+    ```
+
+  ```
+
+  ```
 
 ## Create a DNS record in Cloudflare for your Trafik Server
 
 - Back in CloudFlare, create a DNS record to point to a false public IP address. We'll update that later.
 
-    > Note: 
-    >
-    > The Proxy status of a DNS record affects how Cloudflare treats incoming traffic to that record. Cloudflare recommends enabling our proxy for all A, AAAA, and CNAME records that are used for serving web traffic.
+  > Note:
+  >
+  > The Proxy status of a DNS record affects how Cloudflare treats incoming traffic to that record. Cloudflare recommends enabling our proxy for all A, AAAA, and CNAME records that are used for serving web traffic.
 
     <img src="images/image-48.png" alt="drawing" width="1000"/>
 
 - Wait about a minute, and try to resolve the name on your laptop
 
-    ```sh
-    dig homelab-traefik.<your_domain> 8.8.8.8
-    ```
+  ```sh
+  dig homelab-traefik.<your_domain> 8.8.8.8
+  ```
+
     <img src="images/image-49.png" alt="drawing" width="1000"/>
 
 - In the CloudFlare Dashboard, you'll find your ZoneID and Account ID. Take note of those values
@@ -150,43 +163,46 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 Now, we'll set up an script on any of your linux servers on your homelab, to automatically update your public IP address on your DNS record.
 
 - Download the script from here: [cloudflare-ddns-updater](https://github.com/K0p1-Git/cloudflare-ddns-updater). We'll need the script `cloudflare-template.sh`.
-    ```sh
-    sudo su - 
-    vi renew_ip_cloudflare.sh
-    # Copy the content of the file
-    ```
+
+  ```sh
+  sudo su -
+  vi renew_ip_cloudflare.sh
+  # Copy the content of the file
+  ```
 
 - Then change the following parameters, save the file and close it.
 
-    - `auth_email` The email used to login to Cloudflare
-    - `auth_method` Leave the default token value
-    - `auth_key` API Key set up previously
-    - `zone_identifier` Value from the Overview page of the CloudFlare Dahsboard
-    - `record_name` Fully qualified name, i.e. homelab-traefik.<yourdomain>
+  - `auth_email` The email used to login to Cloudflare
+  - `auth_method` Leave the default token value
+  - `auth_key` API Key set up previously
+  - `zone_identifier` Value from the Overview page of the CloudFlare Dahsboard
+  - `record_name` Fully qualified name, i.e. homelab-traefik.<yourdomain>
 
     <img src="images/image-51.png" alt="drawing" width="1000"/>
 
 - Change the script permissions.
-    ```sh
-    chmod +x renew_ip_cloudflare.sh
-    ```
 
-- Excute the script, and make sure it updates the DNS record in Cloudflare. 
-    ```sh
-    ./renew_ip_cloudflare.sh
-    ```
+  ```sh
+  chmod +x renew_ip_cloudflare.sh
+  ```
+
+- Excute the script, and make sure it updates the DNS record in Cloudflare.
+
+  ```sh
+  ./renew_ip_cloudflare.sh
+  ```
+
     <img src="images/image-52.png" alt="drawing" width="1000"/>
 
-
 - Schedule a crontab job to run this script every night at 12:10 am.
-    ```sh
-    crontab -e
-    # Enter this line
-    0 * * * * /root/renew_ip_cloudflare.sh >> /var/log/renew_ip_cloudflare.log 2>&1
-    # Save an exit
-    # Then restart the crontab service
-    systemctl restart cron
-    ```
+  ```sh
+  crontab -e
+  # Enter this line
+  0 * * * * /root/renew_ip_cloudflare.sh >> /var/log/renew_ip_cloudflare.log 2>&1
+  # Save an exit
+  # Then restart the crontab service
+  systemctl restart cron
+  ```
 
 ## Allow HTTPS traffic to your Traefik Server
 
@@ -207,43 +223,44 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 ### OPNsense Router
 
 - Login to your OPNsense home router. Go to `Firewall > Settings > Advanced`:
-    - Reflection for port forwards: Leave it disabled
-    - Reflection for 1:1: Leave it disabled
-    - Automatic outbound NAT for Reflection: Enabled 
+
+  - Reflection for port forwards: Leave it disabled
+  - Reflection for 1:1: Leave it disabled
+  - Automatic outbound NAT for Reflection: Enabled
 
     <img src="images/image-76.png" alt="drawing" width="1000"/>
 
 - Go to `Firewall > Aliases >` Add a new alias
-    - Name: "traefik"
-    - type: Host(s)
-    - Aliases: Input 192.168.1.200
-    - Description: "homelab traefik"
+
+  - Name: "traefik"
+  - type: Host(s)
+  - Aliases: Input 192.168.1.200
+  - Description: "homelab traefik"
 
     <img src="images/image-77.png" alt="drawing" width="1000"/>
 
 - Go to `Firewall > NAT > Port Forward`
 
-    - Interface: WAN
-    - TCP/IP Version: IPv4
-    - Protocol: TCP
+  - Interface: WAN
+  - TCP/IP Version: IPv4
+  - Protocol: TCP
 
-    - Source / Invert: Unchecked
-    - Source: Any
-    - Source port range: from: any to: any
+  - Source / Invert: Unchecked
+  - Source: Any
+  - Source port range: from: any to: any
 
-    - Destination / Invert: Unchecked
-    - Destination: WAN address
-    - Destination Port range: from: HTTPS to: HTTPS
+  - Destination / Invert: Unchecked
+  - Destination: WAN address
+  - Destination Port range: from: HTTPS to: HTTPS
 
-    - Redirect target IP: Alias "traefik"
-    - Redirect target Port: HTTPS
+  - Redirect target IP: Alias "traefik"
+  - Redirect target Port: HTTPS
 
-    - Pool Options: Default
-    - NAT reflection: Enable
-    - Filter rule association: Rule Homelab Traefik
+  - Pool Options: Default
+  - NAT reflection: Enable
+  - Filter rule association: Rule Homelab Traefik
 
     <img src="images/image-78.png" alt="drawing" width="1000"/>
-
 
 ### Test
 
@@ -251,161 +268,175 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 
     <img src="images/image-58.png" alt="drawing" width="1000"/>
 
-
 ## Deploying Certificate Manager with DNS Challange
 
 - Create the Cloudflare credentials using this file [01-cert-manager-cloudflare-credentials.yaml](01-cert-manager-cloudflare-credentials.yaml). This time the credentials will be stored in the `cert-manager` namespace.
 
-    > ⚠️ **Warning**: 
-    > 
-    > You should replace this email address and API key with your own, on the traefik-credentials yaml file.
+  > ⚠️ **Warning**:
+  >
+  > You should replace this email address and API key with your own, on the traefik-credentials yaml file.
 
-    ```sh
-    code 01-cert-manager-cloudflare-credentials.yaml
-    # Replace the email address and API Key with your own.
-    kubectl apply -f 01-cert-manager-cloudflare-credentials.yaml
-    kubectl describe secrets cloudflare-credentials -n cert-manager
-    ```
+  ```sh
+  code 01-cert-manager-cloudflare-credentials.yaml
+  # Replace the email address and API Key with your own.
+  kubectl apply -f 01-cert-manager-cloudflare-credentials.yaml
+  kubectl describe secrets cloudflare-credentials -n cert-manager
+  ```
+
      <img src="images/image-61.png" alt="drawing" width="700"/>
 
 - Create a **Staging ClusterIssuer**, using this file [02-cluster-issuer-DNS-Challenge-staging.yaml](02-cluster-issuer-DNS-Challenge-staging.yaml)
 
-    The Cluster Issuer will create a Secret defined as `dns-challenge-acme-staging`. The Secret will be used to store the account's private key.
+  The Cluster Issuer will create a Secret defined as `dns-challenge-acme-staging`. The Secret will be used to store the account's private key.
 
-    Start with the ACME staging server, as if the production environment is abused, your IP address may be banned for a few days after several failed attempts.
+  Start with the ACME staging server, as if the production environment is abused, your IP address may be banned for a few days after several failed attempts.
 
-    > ⚠️ **Warning**: 
-    >
-    > You should replace this email address and domain with your own.
-    >
-    > Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account.
+  > ⚠️ **Warning**:
+  >
+  > You should replace this email address and domain with your own.
+  >
+  > Let's Encrypt will use this to contact you about expiring certificates, and issues related to your account.
 
-    ```sh
-    code 02-cluster-issuer-DNS-Challenge-staging.yaml
-    # Replace the email address and domain with your own.
+  ```sh
+  code 02-cluster-issuer-DNS-Challenge-staging.yaml
+  # Replace the email address and domain with your own.
 
-    kubectl apply -f 02-cluster-issuer-DNS-Challenge-staging.yaml
-    kubectl get secrets -n cert-manager
-    ```
+  kubectl apply -f 02-cluster-issuer-DNS-Challenge-staging.yaml
+  kubectl get clusterissuers
+  kubectl get secrets -n cert-manager
+  ```
 
 - Confirm the Cluster Issuer was created successfully.
-    ```sh
-    kubectl get pods -A | grep cert-manager
-    kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
-    ```
+
+  ```sh
+  kubectl get pods -A | grep cert-manager
+  kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
+  ```
+
      <img src="images/image-62.png" alt="drawing" width="1100"/>
+
+- If it fails to deploy, run this command
+
+  ```
+  kubectl rollout restart deployment/cert-manager -n cert-manager
+  ```
 
 - Additonally, create a **Production ClusterIssuer**, using this file [03-cluster-issuer-DNS-Challenge-prod.yaml](03-cluster-issuer-DNS-Challenge-prod.yaml)
 
-    The Cluster Issuer will create a Secret defined as `dns-challenge-acme-prod`. The Secret will be used to store the account's private key.
+  The Cluster Issuer will create a Secret defined as `dns-challenge-acme-prod`. The Secret will be used to store the account's private key.
 
-    ```sh
-    code 03-cluster-issuer-DNS-Challenge-prod.yaml
-    # Replace the email address and domain with your own.
+  ```sh
+  code 03-cluster-issuer-DNS-Challenge-prod.yaml
+  # Replace the email address and domain with your own.
 
-    kubectl apply -f 03-cluster-issuer-DNS-Challenge-prod.yaml
-    kubectl get secrets -n cert-manager
+  kubectl apply -f 03-cluster-issuer-DNS-Challenge-prod.yaml
+  kubectl get clusterissuers
+  kubectl get secrets -n cert-manager
+  ```
 
-    kubectl get pods -A | grep cert-manager
-    kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
-    ```
+- Confirm the Cluster Issuer was created successfully.
 
-- Create a new **Staging*** certificate using this file [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml).
+  ```sh
+  kubectl get pods -A | grep cert-manager
+  kubectl logs -n cert-manager deploy/cert-manager --tail 100 -f
+  ```
 
-    > ⚠️ **Warning**: 
-    >
-    > You should replace this domain with your own.
+- Create a new **Staging\*** certificate using this file [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml).
 
-    ```sh
-    code test-traefik-certificate-DNS-staging.yaml
-    # Replace the email address and domain with your own.
+  > ⚠️ **Warning**:
+  >
+  > You should replace this domain with your own.
 
-    kubectl apply -f test-traefik-certificate-DNS-staging.yaml
-    ```
+  ```sh
+  code test-traefik-certificate-DNS-staging.yaml
+  # Replace the email address and domain with your own.
 
-- Then confirm the events on the certificate recently created, to confirm this was successfull. 
+  kubectl apply -f test-traefik-certificate-DNS-staging.yaml
+  ```
 
-    > Note: To produce a valid certificate, by Let's Encrypt may take a **few minutes**.
+- Then confirm the events on the certificate recently created, to confirm this was successfull.
 
-    ```sh
-    watch kubectl describe certificates mydomain-wildcard-cluster-cert-staging -n traefik
-    ```
+  > Note: To produce a valid certificate, by Let's Encrypt may take a **few minutes**.
+
+  ```sh
+  watch kubectl describe certificates mydomain-wildcard-cluster-cert-staging -n traefik
+  ```
+
     <img src="images/image-63.png" alt="drawing" width="1100"/>
 
-
-    > ⚠️ **Warning**: 
-    >
-    > Some times is required do access Cloudflare DNS records, and modify the content of the DNS challange, adding quotation marks on it.
+  > ⚠️ **Warning**:
+  >
+  > Some times is required do access Cloudflare DNS records, and modify the content of the DNS challange, adding quotation marks on it.
 
     <img src="images/image-75.png" alt="drawing" width="1100"/>
 
-
-
 - You can also inspect the certificate produced
 
-    ```sh
-    kubectl get secret mydomain-wildcard-cluster-cert-staging-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
-    ```
+  ```sh
+  kubectl get secret mydomain-wildcard-cluster-cert-staging-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
+  ```
+
     <img src="images/image-64.png" alt="drawing" width="1100"/>
 
-- You can delete the Let's Encrypt **Staging*** certificate.
+- You can delete the Let's Encrypt **Staging\*** certificate.
 
-    ```sh
-    kubectl delete -f test-traefik-certificate-DNS-staging.yaml
-    kubectl delete secret mydomain-wildcard-cluster-cert-staging-tls -n traefik
-    ```
+  ```sh
+  kubectl delete -f test-traefik-certificate-DNS-staging.yaml
+  kubectl delete secret mydomain-wildcard-cluster-cert-staging-tls -n traefik
+  ```
 
 - Create a new **Production** certificate using this file [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml).
 
-    > ⚠️ **Warning**: 
-    >
-    > You should replace this domain with your own.
+  > ⚠️ **Warning**:
+  >
+  > You should replace this domain with your own.
 
-    ```sh
-    kubectl apply -f 04-traefik-certificate-DNS-prod.yaml
+  ```sh
+  kubectl apply -f 04-traefik-certificate-DNS-prod.yaml
 
-    watch kubectl describe certificates mydomain-wildcard-cluster-cert-prod -n traefik
+  watch kubectl describe certificates mydomain-wildcard-cluster-cert-prod -n traefik
 
-    kubectl get secret mydomain-wildcard-cluster-cert-prod-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
-    ```
+  kubectl get secret mydomain-wildcard-cluster-cert-prod-tls -n traefik -o jsonpath='{.data.tls\.crt}' | base64 -d | openssl x509 -text
+  ```
 
     <img src="images/image-65.png" alt="drawing" width="1100"/>
-
 
 ## Update the Traefik deployment with a valid TLS certificate
 
 - Make a copy of the Traefik Values file [02-traefik-values-with-lets-encrypt.yaml](../06-TRAEFIK-LETS-ENCRYPT/02-traefik-values-with-lets-encrypt.yaml), or use this file [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml), and modify the following entries in the configuration.
 
-    > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
+  > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
 
-    - `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
+  - `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
 
-    - `ingressRoute.dashboard.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
+  - `ingressRoute.dashboard.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
 
     <img src="images/image-66.png" alt="drawing" width="1100"/>
 
-    - `ports.web.websecure.tls.enabled: true`
+  - `ports.web.websecure.tls.enabled: true`
 
-    - `ports.web.websecure.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
+  - `ports.web.websecure.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
 
     <img src="images/image-67.png" alt="drawing" width="1100"/>
 
-    - `ports.web.websecure.proxyProtocol.insecure: true`
+  - `ports.web.websecure.proxyProtocol.insecure: true`
 
-    > Note: Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX or Teleport.
+  > Note: Disables SSL certificate verification between your Traefik instance and yout backend i.e. NGINX or Teleport.
 
     <img src="images/image-70.png" alt="drawing" width="1000"/>
 
+- Upgrade the Traefik helm chart.
 
--  Upgrade the Traefik helm chart.
-    ```sh
-    helm upgrade traefik traefik/traefik --namespace traefik --values=05-traefik-values-DNS-Challange.yaml
-    ```
+  ```sh
+  helm upgrade traefik traefik/traefik --namespace traefik --values=05-traefik-values-DNS-Challange.yaml
+  ```
 
 - Confirm the IngressRoute has been modified
-    ```sh
-    kubectl describe ingressroute traefik-dashboard -n traefik
-    ```
+
+  ```sh
+  kubectl describe ingressroute traefik-dashboard -n traefik
+  ```
+
     <img src="images/image-68.png" alt="drawing" width="900"/>
 
 - Then open a browser and navigate to [https://homelab-traefik.<your_domain>/](https://homelab-traefik.<your_domain>/). Inspect the certificate and confirm it's valid.
