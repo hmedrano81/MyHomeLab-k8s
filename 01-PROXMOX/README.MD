@@ -343,7 +343,7 @@ HIGH AVAILABILITY REQUIRES THREE NODES
   - BIOS: OVMF (UEFI)
   - EFI Storage: local-lvm
   - SCSI Controller: VirtIO SCSI single
-  - Add EFI Disk:
+  - Add EFI Disk: Enabled
   - Add TPM: Checked. (Required for Windows 11)
 
 - Disks:
@@ -373,15 +373,11 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 
 ### Installing Windows
 
-Official Documentation:
-
-- [How to install Win11 in Proxmox | Quick guide | And fix problems of network search](https://forum.proxmox.com/threads/how-to-install-win11-in-proxmox-quick-guide-and-fix-problems-of-network-search.136596/)
-
-- [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.youtube.com/watch?v=srOty2jflF4)
-
 Download the ISO: - [x86](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso) - [ARM](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewarm64)
 
 Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
+
+![alt text](images/image-16.png)
 
 #### Windows Inside program
 
@@ -419,6 +415,8 @@ Offical documentation:
 
 - [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability)
 
+- [How to install Win11 in Proxmox | Quick guide | And fix problems of network search](https://forum.proxmox.com/threads/how-to-install-win11-in-proxmox-quick-guide-and-fix-problems-of-network-search.136596/)
+
 YoutTube Videos:
 
 - [Let's Install Proxmox 8.0!: Linux ](https://www.youtube.com/watch?v=sZcOlW-DwrU)
@@ -428,3 +426,5 @@ YoutTube Videos:
 - [ProxMox High Availability Cluster!](https://www.youtube.com/watch?v=08b9DDJ_yf4)
 
 - [Windows 11 on Proxmox -- Virtualization made easy](https://www.youtube.com/watch?v=iq3F5wgn_CI)
+
+- [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.youtube.com/watch?v=srOty2jflF4)
