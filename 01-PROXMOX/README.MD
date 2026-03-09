@@ -66,7 +66,6 @@
   ```
 
 - Handle Configuration Questions. During upgrade, you'll be prompted about configuration files. Generally:
-
   - Keep your current configuration for network interfaces
   - Accept new configurations for system files unless you have specific customizations
 
@@ -186,7 +185,6 @@ YouTube video: [ProxMox High Availability Cluster!](https://www.youtube.com/watc
 - Go to Datacenter -> `<Proxmox_first_node>` -> Disks -> ZFS -> Create ZFS.
 
     <img src="images/image-14.png" alt="drawing" width="1100"/>
-
   - `Name: HL-Storage`
   - `RAID Level: Mirror`
   - Make sure the `Add Storage` checkbox is selectec.
@@ -215,19 +213,16 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 ### Settings in Proxmox
 
 - OS:
-
   - Guest OS type: Linux
   - Guest OS Version: 6.x - 2.6 Kernel
 
 - System:
-
   - Graphic card: Default
   - Machine: q35 (UEFI)
   - BIOS: OVMF (UEFI)
   - EFI Storage: local-lvm
 
 - Disks:
-
   - Bus/Device: SCSI
   - Storage: local-lvm
   - Disk size: 60 GiB (Thin prevision by default)
@@ -236,18 +231,15 @@ HIGH AVAILABILITY REQUIRES THREE NODES
   - IO thread: Disable (default)
 
 - CPU:
-
   - Sockets: 1
   - Cores: 8
   - Types: x86-64-v2-AES (New default)
 
 - Memory:
-
   - Memory: 16384 MiB
   - Advanced -> Ballooning Device: Check
 
 - Network:
-
   - Bridge: vmbr0
   - Model: Intel E1000
 
@@ -329,7 +321,6 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 ### Settings in Proxmox
 
 - OS:
-
   - Guest OS > Type: Microsoft Windows
   - Guest OS > Version: 11/2022/2025
   - Add additional driver for VirtIO: Checked
@@ -337,7 +328,6 @@ HIGH AVAILABILITY REQUIRES THREE NODES
     - ISO image: virtio-win-0.1.240.iso or latest
 
 - System:
-
   - Graphic card: Default
   - Machine: q35
   - BIOS: OVMF (UEFI)
@@ -347,7 +337,6 @@ HIGH AVAILABILITY REQUIRES THREE NODES
   - Add TPM: Checked. (Required for Windows 11)
 
 - Disks:
-
   - Bus/Device: SCSI
   - Storage: local-lvm
   - Disk size: 60 GiB (Thin prevision by default)
@@ -357,13 +346,11 @@ HIGH AVAILABILITY REQUIRES THREE NODES
   - SSD emulation: Enabled
 
 - CPU:
-
   - Sockets: 1
   - Cores: 8
   - Types: x86-64-v2-AES (New default)
 
 - Memory:
-
   - Memory: 16384 MiB
   - Advanced -> Balloning Device: Uncheck (Not recommended , as it will allocate all the memory to the VM)
 
@@ -396,6 +383,10 @@ Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/v
 ![alt text](images/image-17.png)
 
     > Note: [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso)
+
+#### Microsoft Activation Script
+
+https://github.com/massgravel/Microsoft-Activation-Scripts
 
 ## Cheat sheet
 
