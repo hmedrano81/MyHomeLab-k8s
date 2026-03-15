@@ -348,7 +348,7 @@ HIGH AVAILABILITY REQUIRES THREE NODES
 - CPU:
   - Sockets: 1
   - Cores: 8
-  - Types: x86-64-v2-AES (New default)
+  - Types: `x86-64-v2-AES` / `host` (2nd one required to support WSL)
 
 - Memory:
   - Memory: 16384 MiB
@@ -375,14 +375,6 @@ Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/v
 - Settings -> Windows insider program - > Link an account
 
 - Set-ExecutionPolicy RemoteSigned
-
-#### Enable RDP on Windows 11 Hack
-
-[https://www.youtube.com/watch?v=QWeQk-8HwFo](How To Fix Rdp Not Working On Windows 11 Home)
-
-![alt text](images/image-17.png)
-
-    > Note: [How to Install Windows 11 on M1/M2 Mac with VMWARE Fusion 13 (NEW)](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso)
 
 #### Microsoft Activation Script
 
