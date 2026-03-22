@@ -539,3 +539,120 @@ kubectl config set-cluster $CONTEXT_CLUSTER \
 rm /tmp/homelab-admin.conf /tmp/homelab-client.crt /tmp/homelab-client.key /tmp/homelab-ca.crt
 ssh homelab-k8s-controller01 "rm ~/admin.conf"
 ```
+
+### Upgrade all nodes from version 1.32 to 1.33
+
+#### Controller nodes upgrade
+
+- Update apt repo from v1.32 to v1.33
+
+```sh
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo nala update
+```
+
+- Unhold and upgrade kubeadm only first
+
+```sh
+sudo apt-mark unhold kubeadm
+sudo nala install kubeadm=1.33.10-1.1 -y
+sudo apt-mark hold kubeadm
+```
+
+- Verify and plan the upgrade, and apply the upgrade (control plane components + etcd)
+
+```sh
+kubeadm version
+sudo kubeadm upgrade plan v1.33.10
+sudo kubeadm upgrade apply v1.33.0
+```
+
+- Upgrade kubelet and kubectl
+
+```sh
+sudo apt-mark unhold kubelet kubectl
+sudo nala install kubelet=1.33.10-1.1 kubectl=1.33.10-1.1 -y
+sudo apt-mark hold kubelet kubectl
+```
+
+- Restart kubelet
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
+- Clean up the previous installations
+
+```sh
+sudo crictl rmi --prune
+sudo apt autoremove -y
+sudo apt clean
+sudo journalctl --vacuum-time=3d
+```
+
+#### Worker nodes upgrade
+
+- Drain the worker node first
+
+```sh
+# Run this command from your laptop
+kubectl drain homelab-k8s-worker01 --ignore-daemonsets --delete-emptydir-data
+```
+
+- Then SSH into worker01 and u pdate apt repo to v1.33
+
+```sh
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo nala update
+```
+
+- Upgrade kubeadm
+
+```sh
+sudo apt-mark unhold kubeadm
+sudo nala install kubeadm=1.33.10-1.1 -y
+sudo apt-mark hold kubeadm
+```
+
+- Upgrade node config
+
+```sh
+sudo kubeadm upgrade node
+```
+
+- Upgrade kubelet and kubectl
+
+```sh
+sudo apt-mark unhold kubelet kubectl
+sudo nala install kubelet=1.33.10-1.1 kubectl=1.33.10-1.1 -y
+sudo apt-mark hold kubelet kubectl
+```
+
+- Restart kubelet
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
+- Then uncordon from Mac/controller01:
+
+```sh
+kubectl uncordon homelab-k8s-worker01
+# verify worker01 shows v1.33
+kubectl get nodes
+```
+
+Once worker01 is Ready, repeat the same process for worker02.
+
+- Clean up the previous installations
+
+```sh
+sudo nala upgrade
+sudo apt autoremove -y
+sudo apt clean
+sudo journalctl --vacuum-time=3d
+```
