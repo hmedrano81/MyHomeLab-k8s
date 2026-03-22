@@ -364,9 +364,9 @@ Download the ISO: - [x86](https://www.microsoft.com/en-us/software-download/wind
 
 Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
 
-![alt text](images/image-16.png)
+<img src="images/image-16.png" width="800">
 
-#### Windows Inside program
+### Windows Inside program
 
 - Install the Vmware tools / mount the drive
 
@@ -376,9 +376,51 @@ Download Virtio-win ISO: [virtio-win.iso](https://fedorapeople.org/groups/virt/v
 
 - Set-ExecutionPolicy RemoteSigned
 
-#### Microsoft Activation Script
+### Microsoft Activation Script
 
 https://github.com/massgravel/Microsoft-Activation-Scripts
+
+## TLS certificates for the Homelab
+
+- **Create a Cloudflare Token:** Login to [dash.cloudflare.com](dash.cloudflare.com) > Top-right → `Profile` > `API Tokens` > `Create Token` > `Create Custom Token`. SSH to the Proxmox server and confirm the token is working with the URL provided.
+
+<img src="images/image-18.png" width="1000">
+
+- **Add a DNS Record in Cloudflare:** Login to [dash.cloudflare.com](dash.cloudflare.com) > `Domains` > `Overview` > Click on your domain > `DNS` > `Records` >
+
+<img src="images/image-26.png" width="1000">
+
+- **Add the Cloudflare Plugin in Proxmox:** On your local Proxmox server > `Datacenter` > `ACME` > `Challenge Plugins` > `Add`
+
+<img src="images/image-19.png" width="1000">
+
+- **Create a Staging ACME Account:** On your local Proxmox server > `Datacenter` > `ACME` > `Accounts` >
+
+<img src="images/image-20.png" width="1000">
+
+<img src="images/image-21.png" width="1000">
+
+- **Configure the Certificate on each Proxmox Node:** On your local Proxmox server > Node name > `System` > `Certificates` > `ACME` > `Add`
+
+<img src="images/image-22.png" width="1000">
+
+- **Test with Staging:** Select the Account `staging` > Click `Order Certificates Now` and watch the task output.
+
+<img src="images/image-23.png" width="1000">
+
+- Wait for it to complete — the certificate at the top will update to show Issuer: Let's Encrypt.
+
+<img src="images/image-24.png" width="1200">
+
+- **Create a Production ACME Account:** On your local Proxmox server > `Datacenter` > `ACME` > `Accounts` >
+
+<img src="images/image-25.png" width="1000">
+
+- **Switch the Node to Use Production:** On your local Proxmox server > Node name > `System` > `Certificates` > `ACME` > `Edit` (next to `Using Account`) > Switch from staging → production. Then, click `Order Certificates Now` and watch the task output.
+
+<img src="images/image-27.png" width="1000">
+
+- Open the Proxmox Server UI again, this time using the URL [https://proxmox01-local.med2engineering.com:8006](https://proxmox01-local.med2engineering.com:8006)
 
 ## Cheat sheet
 
