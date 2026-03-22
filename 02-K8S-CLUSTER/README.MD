@@ -242,17 +242,18 @@ Official documentation: [Installing kubeadm, kubelet and kubectl](https://kubern
   ```
     <img src="images/image-07.png" alt="drawing" width="800"/>
 
-## Troobleshootin the Controller planes
+## Troobleshooting the Controller planes
 
 - Install the etcd client on the controller plane
+
   ```sh
   sudo nala install etcd-client
   ```
 
 - Check the health of the ETCD database.
-    ```sh
-    etcdctl --endpoints=http://192.168.86.21:2379,http://192.168.86.22:2379 endpoint health
-    ```
+  ```sh
+  etcdctl --endpoints=http://192.168.86.21:2379,http://192.168.86.22:2379 endpoint health
+  ```
 
 ## Creating the Kubernetes Cluster
 
@@ -468,3 +469,73 @@ Official documentation: [Installing Addons](https://kubernetes.io/docs/concepts/
   ```
 
     <img src="images/image-22.png" alt="drawing" width="500"/>
+
+## Maintenance
+
+### Automatically renew the certificates on the Controllers nodes
+
+- Check the status of the certificates
+
+```sh
+sudo kubeadm certs check-expiration
+# You could renew them manually
+sudo kubeadm certs renew all
+sudo reboot
+```
+
+- Install and enable crontab. Then, add a job to renew the certificates to runs once a year: December 1st at 2:00am (This date may have to be changed).
+
+```sh
+sudo nala update && sudo apt install cron -y
+sudo systemctl enable cron
+sudo crontab -e
+# Add this line
+0 2 1 12 * sudo kubeadm certs renew all && sudo systemctl restart kubelet
+```
+
+- Confirm the certificates are valid
+
+```sh
+sudo kubeadm certs check-expiration
+```
+
+  <img src="images/image-26.png" alt="drawing" width="1100"/>
+
+- Get the configuration of the new certificate on your local machine.
+
+```sh
+# ssh into the first controller
+sudo cp /etc/kubernetes/admin.conf ~/admin.conf
+sudo chown hmedrano:hmedrano ~/admin.conf
+
+# Back in your machine, copy the admin.conf
+scp homelab-k8s-controller01:~/admin.conf /tmp/homelab-admin.conf
+
+# Find the user and cluster tied to _homelab context
+set CONTEXT_USER $(kubectl config view --raw -o jsonpath='{.contexts[?(@.name=="_homelab")].context.user}')
+set CONTEXT_CLUSTER $(kubectl config view --raw -o jsonpath='{.contexts[?(@.name=="_homelab")].context.cluster}')
+
+# Extract new certs to temp files
+kubectl --kubeconfig=/tmp/homelab-admin.conf config view --raw \
+    -o jsonpath='{.users[0].user.client-certificate-data}' | base64 -d > /tmp/homelab-client.crt
+
+kubectl --kubeconfig=/tmp/homelab-admin.conf config view --raw \
+    -o jsonpath='{.users[0].user.client-key-data}' | base64 -d > /tmp/homelab-client.key
+
+kubectl --kubeconfig=/tmp/homelab-admin.conf config view --raw \
+    -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d > /tmp/homelab-ca.crt
+
+# Update only the _homelab context
+kubectl config set-credentials $CONTEXT_USER \
+  --client-certificate=/tmp/homelab-client.crt \
+  --client-key=/tmp/homelab-client.key \
+  --embed-certs=true
+
+kubectl config set-cluster $CONTEXT_CLUSTER \
+  --certificate-authority=/tmp/homelab-ca.crt \
+  --embed-certs=true
+
+# Cleanup
+rm /tmp/homelab-admin.conf /tmp/homelab-client.crt /tmp/homelab-client.key /tmp/homelab-ca.crt
+ssh homelab-k8s-controller01 "rm ~/admin.conf"
+```

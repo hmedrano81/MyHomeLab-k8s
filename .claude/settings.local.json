@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/hmedrano/GitPersonal/MyHomeLab-k8s -type f -name *automation* -o -type f -name *script*)"
+    ]
+  }
+}
