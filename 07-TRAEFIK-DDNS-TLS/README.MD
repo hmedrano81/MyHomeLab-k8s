@@ -18,30 +18,24 @@ YouTube Videos:
 ## File's replacement summary
 
 - renew_ip_cloudflare.sh
-
   - Replace all the authentication parameters
 
 - [01-cert-manager-cloudflare-credentials.yaml](01-cert-manager-cloudflare-credentials.yaml)
-
   - Replace `<your_cloudflare_email>`
   - Replace `<your_cloudflare_api_key>`
 
 - [02-cluster-issuer-DNS-Challenge-staging.yaml](02-cluster-issuer-DNS-Challenge-staging.yaml)
-
   - Replace `<your_email>`
   - Replace `<your_domain>`
 
 - [test-traefik-certificate-DNS-staging.yaml](test-traefik-certificate-DNS-staging.yaml)
-
   - Replace `<your_domain>`
 
 - [03-cluster-issuer-DNS-Challenge-prod.yaml](03-cluster-issuer-DNS-Challenge-prod.yaml)
-
   - Replace `<your_email>`
   - Replace `<your_domain>`
 
 - [04-traefik-certificate-DNS-prod.yaml](04-traefik-certificate-DNS-prod.yaml)
-
   - Replace `<your_domain>`
 
 - [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml)
@@ -109,7 +103,6 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
 - Create a Cloudflare API token for use in cert-manager. Create and verify the domain you want to create an SSL certificate.
 
   Documentation: [Lego > DNS Providers > Cloudflare](https://go-acme.github.io/lego/dns/cloudflare/)
-
   - Go to [Cloudflare dashboard](https://dash.cloudflare.com/) > [My Profile](https://dash.cloudflare.com/profile) (Right top corner) > API Tokens.
 
       <img src="images/image-06.png" alt="drawing" width="1000"/>
@@ -125,7 +118,6 @@ In a DNS challange what Let's Encrypt does is login to CloudFlare with your cred
   - Take note of the API Token generated.
 
       <img src="images/image-09.png" alt="drawing" width="700"/>
-
     - Optional, you can run this command to verify the API
 
     ```
@@ -171,7 +163,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
   ```
 
 - Then change the following parameters, save the file and close it.
-
   - `auth_email` The email used to login to Cloudflare
   - `auth_method` Leave the default token value
   - `auth_key` API Key set up previously
@@ -223,7 +214,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 ### OPNsense Router
 
 - Login to your OPNsense home router. Go to `Firewall > Settings > Advanced`:
-
   - Reflection for port forwards: Leave it disabled
   - Reflection for 1:1: Leave it disabled
   - Automatic outbound NAT for Reflection: Enabled
@@ -231,7 +221,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     <img src="images/image-76.png" alt="drawing" width="1000"/>
 
 - Go to `Firewall > Aliases >` Add a new alias
-
   - Name: "traefik"
   - type: Host(s)
   - Aliases: Input 192.168.1.200
@@ -240,7 +229,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
     <img src="images/image-77.png" alt="drawing" width="1000"/>
 
 - Go to `Firewall > NAT > Port Forward`
-
   - Interface: WAN
   - TCP/IP Version: IPv4
   - Protocol: TCP
@@ -261,6 +249,12 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
   - Filter rule association: Rule Homelab Traefik
 
     <img src="images/image-78.png" alt="drawing" width="1000"/>
+
+### Ubiquiti Router
+
+- Traefik Port Forward. Go to `Configuration` > `Policy Engine` > `Create a New Policy`.
+
+  <img src="images/image-79.png" alt="drawing" width="1000"/>
 
 ### Test
 
@@ -406,7 +400,6 @@ Now, we'll set up an script on any of your linux servers on your homelab, to aut
 - Make a copy of the Traefik Values file [02-traefik-values-with-lets-encrypt.yaml](../06-TRAEFIK-LETS-ENCRYPT/02-traefik-values-with-lets-encrypt.yaml), or use this file [05-traefik-values-DNS-Challange.yaml](05-traefik-values-DNS-Challange.yaml), and modify the following entries in the configuration.
 
   > ⚠️ **Warning**: You should enter your own domain name, on the traefik-custom-values yaml file.
-
   - `ingressRoute.matchRule: Host(`homelab-traefik.<your_domain>`)`
 
   - `ingressRoute.dashboard.tls.secretName: mydomain-wildcard-cluster-cert-prod-tls`
