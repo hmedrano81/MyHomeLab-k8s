@@ -125,6 +125,7 @@
     <img src="images/image-15.png" alt="drawing" width="600"/>
 
 - Run these two commands. This will update all packages to the latest version of that major version.
+
   ```sh
   apt update
   apt full-upgrade
